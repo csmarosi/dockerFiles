@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+set -x
+
+sudo docker ps -a
+test -n "${1}"
+test -z "${2}"
+
+sudo docker attach ${1}
