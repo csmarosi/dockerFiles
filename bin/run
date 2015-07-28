@@ -22,7 +22,7 @@ if [[ ${imageName} == "dev"* ]]; then
     mountDirs="${mountDirs} -v ${HOME}/github_projects:${HOME}/github_projects"
 fi
 
-if [[ ${imageName} == *"and"* ]]; then
+if [[ ${imageName} == *"android"* ]]; then
     mountDirs="${mountDirs} -v /storagetree/android/android-docker/:${HOME}/android-docker/"
 fi
 
