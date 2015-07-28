@@ -10,8 +10,8 @@ imageName=${1}
 #Don't know why is it needed...
 xhost local:
 
-dockerHome="${HOME}/dockerFiles/dothome"
-mountDirs=''
+mountDirs="-v ${HOME}/dockerVolumes/dothome:${HOME}"
+exposePorts=''
 
 if [[ ${imageName} == *"gui" ]]; then
     mountDirs="${mountDirs} -v /tmp/.X11-unix:/tmp/.X11-unix"
@@ -26,10 +26,17 @@ if [[ ${imageName} == *"android"* ]]; then
     mountDirs="${mountDirs} -v /storagetree/android/android-docker/:${HOME}/android-docker/"
 fi
 
+if [[ ${imageName} == "drraw" ]]; then
+    mountDirs="-v ${HOME}:${HOME}:ro"
+    dir1='/var/lib/drraw/'
+    mountDirs="${mountDirs} -v ${HOME}/dockerVolumes/${imageName}/${dir1}:${dir1}"
+    exposePorts="${exposePorts} -p 8080:80"
+fi
+
 sudo docker run --rm -it -u=$(id -u):$(id -g) \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -v /etc/passwd:/etc/passwd:ro \
     -v /etc/group:/etc/group:ro \
-    -v ${dockerHome}/:${HOME} \
+    ${exposePorts} \
     ${mountDirs} \
     ${imageName} bash
