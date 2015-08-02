@@ -12,10 +12,18 @@ xhost local:
 
 mountDirs="-v ${HOME}/dockerVolumes/dothome:${HOME}"
 exposePorts=''
+runOptions='--rm -it'
+groupId=$(id -g)
+
+
+if [[ ${imageName} == *"wine"* ]]; then
+    mountDirs="-v ${HOME}/dockerVolumes/wine/dothome:${HOME} -v /dev/dri:/dev/dri"
+    runOptions="${runOptions} --privileged"
+    groupId=$(awk -F: '/^video:/{print $3}' /etc/group)
+fi
 
 if [[ ${imageName} == *"gui" ]]; then
     mountDirs="${mountDirs} -v /tmp/.X11-unix:/tmp/.X11-unix"
-    #guiMount="${guiMount} -v /dev/dri:/dev/dri"
 fi
 
 if [[ ${imageName} == "dev"* ]]; then
@@ -33,7 +41,7 @@ if [[ ${imageName} == "drraw" ]]; then
     exposePorts="${exposePorts} -p 8080:80"
 fi
 
-sudo docker run --rm -it -u=$(id -u):$(id -g) \
+sudo docker run ${runOptions} -u=$(id -u):${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -v /etc/passwd:/etc/passwd:ro \
     -v /etc/group:/etc/group:ro \
