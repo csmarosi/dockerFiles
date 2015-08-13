@@ -4,47 +4,54 @@ set -x
 
 sudo docker images
 test -n "${1}"
-test -z "${2}"
 imageName=${1}
+shift
 
 #Don't know why is it needed...
 xhost local:
 
 mountDirs="-v ${HOME}/dockerVolumes/dothome:${HOME}"
+mountDirsFile=${HOME}/dockerVolumes/${imageName}.vol
+if [ -s ${mountDirsFile} ]; then
+    mountDirs="$(cat ${mountDirsFile})"
+fi
 exposePorts=''
 runOptions='--rm -it'
 groupId=$(id -g)
+userId=$(id -u)
+runCommand='bash'
 
 
 if [[ ${imageName} == *"wine"* ]]; then
-    mountDirs="-v ${HOME}/dockerVolumes/wine/dothome:${HOME} -v /dev/dri:/dev/dri"
     runOptions="${runOptions} --privileged"
     groupId=$(awk -F: '/^video:/{print $3}' /etc/group)
 fi
 
 if [[ ${imageName} == *"gui" ]]; then
-    mountDirs="${mountDirs} -v /tmp/.X11-unix:/tmp/.X11-unix"
+    mountDirs="${mountDirs} -v /tmp/.X11-unix:/tmp/.X11-unix:ro"
 fi
 
 if [[ ${imageName} == "dev"* ]]; then
     mountDirs="${mountDirs} -v ${HOME}/github_projects:${HOME}/github_projects"
 fi
 
-if [[ ${imageName} == *"android"* ]]; then
-    mountDirs="${mountDirs} -v /storagetree/android/android-docker/:${HOME}/android-docker/"
-fi
-
 if [[ ${imageName} == "drraw" ]]; then
-    mountDirs="-v ${HOME}:${HOME}:ro"
-    dir1='/var/lib/drraw/'
-    mountDirs="${mountDirs} -v ${HOME}/dockerVolumes/${imageName}/${dir1}:${dir1}"
     exposePorts="${exposePorts} -p 8080:80"
+    HOME=/root
+    userId=0
+    groupId=0
 fi
 
-sudo docker run ${runOptions} -u=$(id -u):${groupId} \
+
+if [ ${userId} != 0 ]; then
+    mountDirs="${mountDirs} -v /etc/passwd:/etc/passwd:ro"
+    mountDirs="${mountDirs} -v /etc/group:/etc/group:ro"
+fi
+
+test -z "${1}"
+sudo docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
-    -v /etc/passwd:/etc/passwd:ro \
-    -v /etc/group:/etc/group:ro \
+    -e QT_X11_NO_MITSHM=1 \
     ${exposePorts} \
     ${mountDirs} \
-    ${imageName} bash
+    ${imageName} ${runCommand}
