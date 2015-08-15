@@ -3,12 +3,11 @@ FROM debian
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
     apt-get install --no-install-recommends -y -q \
-        apache2 drraw sudo openssh-client \
+        apache2 drraw openssh-client \
         vim \
     && \
     apt-get clean
 
-COPY allSudo /etc/sudoers.d/
 COPY site.conf /etc/apache2/sites-enabled/
 RUN a2enmod cgi
 

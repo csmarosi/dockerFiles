@@ -32,7 +32,7 @@ if [[ ${imageName} == "kde_"* ]]; then
     runCommand="$(echo ${imageName} | cut -d_ -f2) /magic/${fileName}"
 fi
 
-if [[ ${imageName} == *"wine"* ]]; then
+if [[ ${imageName} == "wine"* ]]; then
     runOptions="${runOptions} --privileged"
     groupId=$(awk -F: '/^video:/{print $3}' /etc/group)
 fi
@@ -50,6 +50,10 @@ if [[ ${imageName} == "drraw" ]]; then
     HOME=/root
     userId=0
     groupId=0
+fi
+
+if [[ ${imageName} == "playground"* ]]; then
+    runOptions="-it"
 fi
 
 
