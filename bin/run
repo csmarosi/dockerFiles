@@ -52,6 +52,10 @@ if [[ ${imageName} == "drraw" ]]; then
     groupId=0
 fi
 
+if [[ ${imageName} == "chromium"* ]]; then
+    runOptions="${runOptions} " #--cap-add SYS_ADMIN"
+fi
+
 if [[ ${imageName} == "playground"* ]]; then
     runOptions="-it"
 fi
