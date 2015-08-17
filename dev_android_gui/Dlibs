@@ -1,3 +1,0 @@
-FROM dev_android_gui
-
-RUN apt-get install --no-install-recommends -y -q dpkg \

@@ -7,3 +7,6 @@ RUN apt-get update && \
         chromium-dbg pulseaudio \
     && \
     apt-get clean
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

@@ -10,3 +10,6 @@ RUN apt-get update && \
         libgl1-mesa-dri \
     && \
     apt-get clean
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

@@ -8,3 +8,6 @@ RUN apt-get update && \
 
 RUN cabal update
 RUN cabal install --global cryptocipher HUnit
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

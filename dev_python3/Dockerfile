@@ -10,3 +10,6 @@ RUN pip3 install \
         pytest-quickcheck pyflakes pep8 coverage \
         tweepy pykka \
         ipython matplotlib numpy
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

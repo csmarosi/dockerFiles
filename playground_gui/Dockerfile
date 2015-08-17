@@ -13,4 +13,7 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-COPY allSudo /etc/sudoers.d/
+COPY playground_gui/allSudo /etc/sudoers.d/
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

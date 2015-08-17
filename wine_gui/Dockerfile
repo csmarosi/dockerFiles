@@ -8,3 +8,6 @@ RUN apt-get update && \
         winetricks wine wine32 fonts-wine \
     && \
     apt-get clean
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

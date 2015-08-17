@@ -8,10 +8,13 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-COPY site.conf /etc/apache2/sites-enabled/
+COPY root_drraw/site.conf /etc/apache2/sites-enabled/
 RUN a2enmod cgi
 
 RUN mkdir -p /var/www/collectd && \
     chmod 777 /var/www/collectd && \
     mkdir /var/www/cgi-bin && \
     ln -s /usr/lib/cgi-bin/drraw /var/www/cgi-bin/drraw
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

@@ -7,3 +7,6 @@ RUN apt-get update && \
         kcachegrind graphviz \
     && \
     apt-get clean
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

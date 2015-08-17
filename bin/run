@@ -16,20 +16,18 @@ if [ -s ${mountDirsFile} ]; then
     mountDirs="$(cat ${mountDirsFile})"
 fi
 exposePorts=''
-runOptions='--rm -it'
+runOptions="--rm -it --hostname=${imageName}"
 groupId=$(id -g)
 userId=$(id -u)
-runCommand='bash'
+runCommand=''
 
 
-if [[ ${imageName} == "kde_"* ]]; then
-    test -n "${1}"
+if [ -n "${1}" ]; then
     filePath=$(readlink -f "${1}")
     shift
-    fileName=$(basename "${filePath}")
     dirName=$(dirname "${filePath}")
-    mountDirs="${mountDirs} -v ${dirName}:/magic/"
-    runCommand="$(echo ${imageName} | cut -d_ -f2) /magic/${fileName}"
+    mountDirs="${mountDirs} -v ${dirName}:/magic:ro"
+    runCommand=$(basename "${filePath}")
 fi
 
 if [[ ${imageName} == "wine"* ]]; then
@@ -45,11 +43,11 @@ if [[ ${imageName} == "dev"* ]]; then
     mountDirs="${mountDirs} -v ${HOME}/github_projects:${HOME}/github_projects"
 fi
 
-if [[ ${imageName} == "drraw" ]]; then
-    exposePorts="${exposePorts} -p 8080:80"
-    HOME=/root
+if [[ ${imageName} == "root"* ]]; then
     userId=0
     groupId=0
+    runOptions="$(echo ${runOptions} | sed 's!--rm!!')"
+    exposePorts="$(cat ${HOME}/dockerVolumes/${imageName}.port)"
 fi
 
 if [[ ${imageName} == "chromium"* ]]; then
@@ -57,13 +55,15 @@ if [[ ${imageName} == "chromium"* ]]; then
 fi
 
 if [[ ${imageName} == "playground"* ]]; then
-    runOptions="-it"
+    runOptions="$(echo ${runOptions} | sed 's!--rm!!')"
 fi
 
 
 if [ ${userId} != 0 ]; then
     mountDirs="${mountDirs} -v /etc/passwd:/etc/passwd:ro"
     mountDirs="${mountDirs} -v /etc/group:/etc/group:ro"
+else
+    HOME=/root
 fi
 
 test -z "${1}"
