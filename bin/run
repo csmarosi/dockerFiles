@@ -51,6 +51,9 @@ if [[ ${imageName} == "root"* ]]; then
 fi
 
 if [[ ${imageName} == "chromium"* ]]; then
+    #TODO: check this after chromium issue 522853 is closed
+    tmpDir=$(mktemp -d --tmpdir=/dev/shm)
+    mountDirs="${mountDirs}  -v ${tmpDir}:/dev/shm"
     runOptions="${runOptions} " #--cap-add SYS_ADMIN"
 fi
 
