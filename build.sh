@@ -12,4 +12,4 @@ test -n "${1}"
 test -z "${2}"
 imageName=${1}
 
-sudo docker build ${buildOptions} -t ${imageName} -f ${imageName}/Dockerfile .
+docker build ${buildOptions} -t ${imageName} -f ${imageName}/Dockerfile .

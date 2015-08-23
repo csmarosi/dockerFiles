@@ -2,13 +2,10 @@
 set -e
 set -x
 
-sudo docker images
+docker images
 test -n "${1}"
 imageName=${1}
 shift
-
-#Don't know why is it needed...
-xhost local:
 
 mountDirs="-v ${HOME}/dockerVolumes/dothome:${HOME}"
 mountDirsFile=${HOME}/dockerVolumes/${imageName}.vol
@@ -36,6 +33,7 @@ if [[ ${imageName} == "wine"* ]]; then
 fi
 
 if [[ ${imageName} == *"gui" ]]; then
+    xhost local:
     mountDirs="${mountDirs} -v /tmp/.X11-unix:/tmp/.X11-unix:ro"
 fi
 
@@ -70,7 +68,7 @@ else
 fi
 
 test -z "${1}"
-sudo docker run ${runOptions} -u=${userId}:${groupId} \
+docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 \
     ${exposePorts} \
