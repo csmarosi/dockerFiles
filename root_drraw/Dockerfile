@@ -16,5 +16,5 @@ RUN mkdir -p /var/www/collectd && \
     mkdir /var/www/cgi-bin && \
     ln -s /usr/lib/cgi-bin/drraw /var/www/cgi-bin/drraw
 
-COPY entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
+COPY root_drraw/*.sh /root/
+ENTRYPOINT ["/root/setupHacks.sh"]
