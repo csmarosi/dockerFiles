@@ -71,6 +71,7 @@ test -z "${1}"
 docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 \
+    -P \
     ${exposePorts} \
     ${mountDirs} \
     ${imageName} ${runCommand}
