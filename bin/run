@@ -21,10 +21,15 @@ runCommand=''
 
 if [ -n "${1}" ]; then
     filePath=$(readlink -f "${1}")
-    shift
-    dirName=$(dirname "${filePath}")
-    mountDirs="${mountDirs} -v ${dirName}:/magic:ro"
-    runCommand=$(basename "${filePath}")
+    if [ -f ${filePath} ]; then
+        shift
+        dirName=$(dirname "${filePath}")
+        mountDirs="${mountDirs} -v ${dirName}:/magic:ro"
+        runCommand=$(basename "${filePath}")
+        test -z "${1}"
+    else
+        runCommand="${@}"
+    fi
 fi
 
 if [[ ${imageName} == "wine"* ]]; then
@@ -67,7 +72,6 @@ else
     HOME=/root
 fi
 
-test -z "${1}"
 docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 \
