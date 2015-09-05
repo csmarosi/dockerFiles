@@ -1,0 +1,9 @@
+DEFAULT sysrcd
+
+LABEL linux
+KERNEL vmlinuz
+APPEND root=/dev/nfs initrd=initrd.img nfsroot=192.168.1.1:/nfsDebian/ ip=dhcp rw ipv6.disable=1 noapic nolapic
+
+LABEL sysrcd
+KERNEL cdrom/isolinux/rescue32
+APPEND initrd=cdrom/isolinux/initram.igz nomodeset netboot=tftp://192.168.76.18/cdrom/sysrcd.dat
