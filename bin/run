@@ -13,6 +13,10 @@ if [ -s ${mountDirsFile} ]; then
     mountDirs="$(cat ${mountDirsFile})"
 fi
 exposePorts=''
+exposePortsFile=${HOME}/dockerVolumes/${imageName}.port
+if [ -s ${exposePortsFile} ]; then
+    exposePorts="$(cat ${exposePortsFile})"
+fi
 runOptions="--rm -it --hostname=${imageName}"
 groupId=$(id -g)
 userId=$(id -u)
@@ -39,7 +43,7 @@ fi
 
 if [[ ${imageName} == *"gui" ]]; then
     xhost local:
-    mountDirs="${mountDirs} -v /tmp/.X11-unix:/tmp/.X11-unix:ro"
+    mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
 fi
 
 if [[ ${imageName} == "dev"* ]]; then
@@ -50,7 +54,6 @@ if [[ ${imageName} == "root"* ]]; then
     userId=0
     groupId=0
     runOptions="$(echo ${runOptions} | sed 's!--rm!!')"
-    exposePorts="$(cat ${HOME}/dockerVolumes/${imageName}.port)"
 fi
 
 if [[ ${imageName} == "chromium"* ]]; then

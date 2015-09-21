@@ -1,4 +1,4 @@
-FROM debian:sid
+FROM xrdp_base
 
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
