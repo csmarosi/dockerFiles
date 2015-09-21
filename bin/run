@@ -72,6 +72,11 @@ else
     HOME=/root
 fi
 
+# support for non-interactive mode (i.e. crontab)
+if [[ ! -t 1 ]]; then
+    runOptions="$(echo ${runOptions} | sed 's!-it!!')"
+fi
+
 docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 \
