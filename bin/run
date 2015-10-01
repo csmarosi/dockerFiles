@@ -37,8 +37,13 @@ if [ -n "${1}" ]; then
 fi
 
 if [[ ${imageName} == "wine"* ]]; then
-    runOptions="${runOptions} --privileged"
+    runOptions="${runOptions} --device /dev/dri"
     groupId=$(awk -F: '/^video:/{print $3}' /etc/group)
+fi
+
+if [[ ${imageName} == "emulators"* ]]; then
+    runOptions="${runOptions} --device /dev/bus/usb"
+    groupId=$(awk -F: '/^lp:/{print $3}' /etc/group)
 fi
 
 if [[ ${imageName} == *"gui" ]]; then
