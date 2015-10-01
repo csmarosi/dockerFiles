@@ -12,7 +12,7 @@ mountDirsFile=${HOME}/dockerVolumes/${imageName}.vol
 if [ -s ${mountDirsFile} ]; then
     mountDirs="$(cat ${mountDirsFile})"
 fi
-exposePorts=''
+exposePorts='-P'
 exposePortsFile=${HOME}/dockerVolumes/${imageName}.port
 if [ -s ${exposePortsFile} ]; then
     exposePorts="$(cat ${exposePortsFile})"
@@ -46,7 +46,7 @@ if [[ ${imageName} == "emulators"* ]]; then
     groupId=$(awk -F: '/^lp:/{print $3}' /etc/group)
 fi
 
-if [[ ${imageName} == *"gui" ]]; then
+if [[ ${imageName} == *"gui" ]] && [[ "${DISPLAY}" == ":0" ]]; then
     xhost local:
     mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
 fi
@@ -66,6 +66,14 @@ if [[ ${imageName} == "chromium"* ]]; then
     tmpDir=$(mktemp -d --tmpdir=/dev/shm)
     mountDirs="${mountDirs}  -v ${tmpDir}:/dev/shm"
     runOptions="${runOptions} " #--cap-add SYS_ADMIN"
+    # Don't take the port if run trough a socket
+    if [[ "${DISPLAY}" == ":0" ]]; then
+        exposePorts=''
+    fi
+    #Allow only one instance
+    if docker ps --no-trunc | grep "${runCommand}"; then
+        exit 42
+    fi
 fi
 
 if [[ ${imageName} == "playground"* ]]; then
@@ -87,8 +95,7 @@ fi
 
 docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
-    -e QT_X11_NO_MITSHM=1 \
-    -P \
+    -e QT_X11_NO_MITSHM=1 -e PULSE_SERVER=${PULSE_SERVER} \
     ${exposePorts} \
     ${mountDirs} \
     ${imageName} ${runCommand}

@@ -2,7 +2,7 @@
 set -e
 set -x
 
-docker ps -a
+docker ps -a --no-trunc
 test -n "${1}"
 test -z "${2}"
 

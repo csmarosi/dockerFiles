@@ -5,8 +5,6 @@ set -e
 cmdArg="${1}"
 fileToOpen=/magic/$(basename ${cmdArg} || true)
 
-sudo chmod 777 /tmp/.X11-unix/ || true
-
 if type file && file --mime-type ${fileToOpen} | \
    grep -E 'tion/.*opendoc|tion/.*openxml|tion/.*ms'; then
     libreoffice ${fileToOpen}

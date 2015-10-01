@@ -8,5 +8,5 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-COPY entrypoint.sh /
+COPY chromium_gui/entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
