@@ -3,10 +3,12 @@ FROM debian:sid
 RUN apt-get update && \
     apt-get dist-upgrade -y && \
     apt-get install --no-install-recommends -y -q \
-        file \
-        texlive-fonts-recommended texlive-latex-extra lmodern \
-        pandoc libreoffice \
-        imagemagick \
+        file git make \
+        fonts-liberation ghostscript imagemagick \
+        libreoffice hunspell-en-us \
+        pandoc \
+        latex-beamer texlive-latex-extra \
+        texlive-fonts-extra texlive-fonts-recommended lmodern \
     && \
     apt-get clean
 
