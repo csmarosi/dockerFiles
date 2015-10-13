@@ -10,11 +10,11 @@ echo $(whoami):$(whoami) | sudo chpasswd
 export PATH=${PATH}:${HOME}/browser_profiles/
 
 if [[ "${DISPLAY}" == ":0" ]]; then
-    ${cmdArg}
+    exec ${cmdArg}
 else
     cd ${HOME}
     cp .ratpoisonrc.common .ratpoisonrc
     echo "exec bash -c 'PULSE_SERVER=${PULSE_SERVER} ${HOME}/browser_profiles/${cmdArg}'" >> .ratpoisonrc
     sudo /etc/init.d/xrdp.sh start
-    bash
+    exec sleep infinity
 fi

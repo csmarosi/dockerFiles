@@ -12,12 +12,12 @@ if type file && file --mime-type ${fileToOpen} | \
 fi
 
 if echo ${cmdArg} | grep -q 'pdf$'; then
-    okular ${fileToOpen}
+    exec okular ${fileToOpen}
 elif echo ${cmdArg} | grep -q 'callgrind'; then
-    kcachegrind ${fileToOpen}
+    exec kcachegrind ${fileToOpen}
 elif test -n "${cmdArg}" && type ${cmdArg}; then
     cd ${HOME}
     ${@}
 else
-    bash
+    exec bash
 fi

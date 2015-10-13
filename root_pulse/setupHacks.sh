@@ -3,7 +3,7 @@ set -x
 set -e
 
 amixer sset 'Master',0 100 unmute
-/usr/bin/pulseaudio \
+exec /usr/bin/pulseaudio \
     --system \
     --daemonize=false \
     -n \

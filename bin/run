@@ -71,7 +71,7 @@ if [[ ${imageName} == "chromium"* ]]; then
         exposePorts=''
     fi
     #Allow only one instance
-    if docker ps --no-trunc | grep "${runCommand}"; then
+    if docker ps --no-trunc | grep "${runCommand}\""; then
         exit 42
     fi
 fi
@@ -86,14 +86,15 @@ if [ ${userId} != 0 ]; then
     mountDirs="${mountDirs} -v /etc/group:/etc/group:ro"
 else
     HOME=/root
+    runOptions="${runOptions} -d"
 fi
 
 # support for non-interactive mode (i.e. crontab)
-if [[ ! -t 1 ]]; then
+if [[ ! -t 1 ]] || [ ${userId} == 0 ]; then
     runOptions="$(echo ${runOptions} | sed 's!-it!!')"
 fi
 
-docker run ${runOptions} -u=${userId}:${groupId} \
+exec docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 -e PULSE_SERVER=${PULSE_SERVER} \
     ${exposePorts} \

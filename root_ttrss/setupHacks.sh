@@ -7,4 +7,4 @@ set -e
 /etc/init.d/apache2 start
 /etc/init.d/tt-rss start
 
-bash
+sleep infinity
