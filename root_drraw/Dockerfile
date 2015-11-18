@@ -4,6 +4,8 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         apache2 drraw openssh-client \
         vim \
+        openssh-server git \
+        libapache2-mod-php5 php5-curl \
     && \
     apt-get clean
 
