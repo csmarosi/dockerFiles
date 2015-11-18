@@ -17,7 +17,7 @@ exposePortsFile=${HOME}/dockerVolumes/${imageName}.port
 if [ -s ${exposePortsFile} ]; then
     exposePorts="$(cat ${exposePortsFile})"
 fi
-runOptions="--rm -it --hostname=${imageName}"
+runOptions="--hostname=${imageName} --rm -it"
 groupId=$(id -g)
 userId=$(id -u)
 runCommand=''
@@ -69,6 +69,17 @@ if [[ ${imageName} == "chromium"* ]]; then
     if docker ps --no-trunc | grep -o "${runCommand}\"" | grep chromium ; then
         exit 42
     fi
+    #TODO: limitation: works only if no other command is passed to the image
+    if docker ps --no-trunc | grep "${runCommand}" ; then
+        runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
+        runOptions="--net=container:${runCommand} ${runOptions}"
+        runCommand=''
+    fi
+fi
+
+#TODO: make this work with tor
+if [[ ${imageName} == *"openvpn"* ]]; then
+    runOptions="${runOptions} --privileged"
 fi
 
 if [[ ${imageName} == "playground"* ]]; then
