@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+set -x
+
+docker ps -a --no-trunc
+test -n "${1}"
+test -z "${2}"
+
+exec docker exec -it ${1} bash

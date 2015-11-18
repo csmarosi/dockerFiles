@@ -2,7 +2,7 @@
 set -e
 set -x
 
-docker images
+docker images | sort
 test -n "${1}"
 imageName=${1}
 shift
@@ -39,11 +39,6 @@ fi
 if [[ ${imageName} == "wine"* ]]; then
     runOptions="${runOptions} --device /dev/dri"
     groupId=$(awk -F: '/^video:/{print $3}' /etc/group)
-fi
-
-if [[ ${imageName} == "emulators"* ]]; then
-    runOptions="${runOptions} --device /dev/bus/usb"
-    groupId=$(awk -F: '/^lp:/{print $3}' /etc/group)
 fi
 
 if [[ ${imageName} == *"gui" ]] && [[ "${DISPLAY}" == ":0" ]]; then
