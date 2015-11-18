@@ -9,7 +9,8 @@ RUN apt-get update && \
 RUN pip3 install \
         pytest-quickcheck pyflakes pep8 coverage \
         tweepy pykka \
-        ipython matplotlib numpy
+        ipython matplotlib numpy \
+        yapf
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]

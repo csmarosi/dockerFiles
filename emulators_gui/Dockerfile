@@ -1,12 +1,11 @@
 FROM debian:sid
 
 RUN apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get install --no-install-recommends -y -q \
         freerdp-x11 \
         qemu \
         bochs-x \
-        git git-svn \
+        git git-svn vim \
         sudo usbutils \
     && \
     apt-get clean

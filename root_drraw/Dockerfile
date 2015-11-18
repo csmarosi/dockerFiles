@@ -1,7 +1,6 @@
 FROM debian
 
 RUN apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get install --no-install-recommends -y -q \
         apache2 drraw openssh-client \
         vim \

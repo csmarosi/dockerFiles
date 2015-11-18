@@ -1,7 +1,6 @@
 FROM debian:sid
 
 RUN apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get install --no-install-recommends -y -q \
         mysql-client ca-certificates \
         git openssh-client vim \
