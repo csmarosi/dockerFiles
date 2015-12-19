@@ -77,8 +77,7 @@ if [[ ${imageName} == "chromium"* ]]; then
     fi
 fi
 
-#TODO: make this work with tor
-if [[ ${imageName} == *"openvpn"* ]]; then
+if echo ${imageName} | grep -qE 'openvpn|_tor' ; then
     runOptions="${runOptions} --privileged"
 fi
 
