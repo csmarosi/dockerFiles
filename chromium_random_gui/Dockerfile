@@ -1,9 +1,10 @@
-FROM ubuntu:14.04
+FROM ubuntu
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         strace \
         chromium-browser pulseaudio \
+        python3 \
     && \
     apt-get clean
 

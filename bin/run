@@ -60,21 +60,17 @@ if [[ ${imageName} == "chromium"* ]]; then
     #TODO: check this after chromium issue 522853 is closed
     tmpDir=$(mktemp -d --tmpdir=/dev/shm)
     mountDirs="${mountDirs} -v ${tmpDir}:/dev/shm"
-    runOptions="${runOptions} " #--cap-add SYS_ADMIN"
     # Don't take the port if run trough a socket
     if [[ "${DISPLAY}" == ":0" ]]; then
         exposePorts=''
     fi
-    #Allow only one instance
-    if docker ps --no-trunc | grep -o "${runCommand}\"" | grep chromium ; then
-        exit 42
-    fi
-    #TODO: limitation: works only if no other command is passed to the image
-    if docker ps --no-trunc | grep "${runCommand}" ; then
+    profileName=$(echo ${imageName} | cut -d_ -f2)
+    runOptions="${runOptions} --name=${profileName}"
+    if [ -n "${runCommand}" ] && docker ps --no-trunc | grep "${runCommand}" ; then
         runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
         runOptions="--net=container:${runCommand} ${runOptions}"
-        runCommand=''
     fi
+    runCommand=${profileName}
 fi
 
 if echo ${imageName} | grep -qE 'openvpn|_tor' ; then

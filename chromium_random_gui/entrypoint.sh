@@ -2,14 +2,21 @@
 set -x
 set -e
 
+profileGenerator=${HOME}/browser_profiles/chromium.py
 export HOME=/tmp/home
 
-mkdir -p ${HOME}/.config/chromium/ ${HOME}/.config/google-chrome/
-touch "${HOME}/.config/chromium/First Run"
-touch "${HOME}/.config/google-chrome/First Run"
-
+browserConfigPath=${HOME}/.config/chromium/
+exePath=/usr/bin/chromium-browser
 if [ -f /usr/bin/google-chrome ]; then
-    exec /usr/bin/google-chrome --no-sandbox
+    browserConfigPath=${HOME}/.config/google-chrome/
+    exePath=/usr/bin/google-chrome
+fi
+
+mkdir -p ${browserConfigPath}
+touch "${browserConfigPath}/First Run"
+
+if [ -f ${profileGenerator} ]; then
+    python3 ${profileGenerator}
 else
-    exec chromium-browser --no-sandbox
+    ${exePath} --no-sandbox
 fi
