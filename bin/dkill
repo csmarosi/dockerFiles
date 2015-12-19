@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+set -x
+
+docker ps -a --no-trunc
+test -n "${1}"
+test -z "${2}"
+
+docker kill ${1}
+docker rm ${1}

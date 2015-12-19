@@ -14,6 +14,10 @@ for myImage in ${imagesToBuild}; do
     ./build.sh ${myImage}
 done
 
+if [ "${1}" != '--all' ]; then
+    exit 0
+fi
+
 for myImage in $(git ls-files | awk -F/ '/Dockerfile/ {print $1}'); do
     ./build.sh ${myImage} || true
 done

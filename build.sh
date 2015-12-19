@@ -8,8 +8,7 @@ if [ '--no-cache' == "${1}" ]; then
     shift
 fi
 
-test -n "${1}"
-test -z "${2}"
-imageName=${1}
-
-docker build ${buildOptions} -t ${imageName} -f ${imageName}/Dockerfile .
+for imageName in ${@}; do
+    imageName=$(echo ${imageName} | sed 's!/!!g')
+    docker build ${buildOptions} -t ${imageName} -f ${imageName}/Dockerfile .
+done
