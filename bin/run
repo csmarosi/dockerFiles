@@ -57,6 +57,8 @@ if [[ ${imageName} == "root"* ]]; then
 fi
 
 if [[ ${imageName} == "chromium"* ]]; then
+    # Chrome leaks hostname: https://isc.sans.edu/diary/Google+Chrome+and+(weird)+DNS+requests/10312
+    runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     #TODO: check this after chromium issue 522853 is closed
     tmpDir=$(mktemp -d --tmpdir=/dev/shm)
     mountDirs="${mountDirs} -v ${tmpDir}:/dev/shm"
@@ -67,10 +69,13 @@ if [[ ${imageName} == "chromium"* ]]; then
     profileName=$(echo ${imageName} | cut -d_ -f2)
     runOptions="${runOptions} --name=${profileName}"
     if [ -n "${runCommand}" ] && docker ps --no-trunc | grep "${runCommand}" ; then
-        runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
         runOptions="--net=container:${runCommand} ${runOptions}"
     fi
     runCommand=${profileName}
+fi
+
+if echo ${imageName} | grep -q 'ulogme' ; then
+    runOptions="${runOptions} --net=none"
 fi
 
 if echo ${imageName} | grep -qE 'openvpn|_tor' ; then
