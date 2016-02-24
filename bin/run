@@ -36,7 +36,7 @@ if [ -n "${1}" ]; then
     fi
 fi
 
-if [[ ${imageName} == "wine"* ]]; then
+if echo "${imageName}" | grep -qE '^wine|^multimedia'; then
     runOptions="${runOptions} --device /dev/dri"
     groupId=$(awk -F: '/^video:/{print $3}' /etc/group)
 fi
@@ -74,7 +74,7 @@ if [[ ${imageName} == "chromium"* ]]; then
     runCommand=${profileName}
 fi
 
-if echo ${imageName} | grep -q 'ulogme' ; then
+if echo ${imageName} | grep -qE 'ulogme|cfssl' ; then
     runOptions="${runOptions} --net=none"
 fi
 

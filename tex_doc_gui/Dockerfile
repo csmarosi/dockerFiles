@@ -8,6 +8,7 @@ RUN apt-get update && \
         pandoc \
         latex-beamer texlive-latex-extra \
         texlive-fonts-extra texlive-fonts-recommended lmodern \
+        pinta \
     && \
     apt-get clean
 
