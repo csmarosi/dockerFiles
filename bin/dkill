@@ -6,5 +6,5 @@ docker ps -a --no-trunc
 test -n "${1}"
 test -z "${2}"
 
-docker kill ${1}
+docker kill ${1} || true
 docker rm ${1}
