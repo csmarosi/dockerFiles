@@ -8,6 +8,7 @@ RUN apt-get update && \
         libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev \
         xfonts-utils \
         procps \
+        wget \
     && \
     apt-get clean
 
@@ -15,7 +16,7 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         make autoconf automake libtool pkg-config \
-        wget bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
+        bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
     && \
     cd /opt && \
     git clone --recursive https://github.com/neutrinolabs/xrdp.git && \
@@ -33,7 +34,7 @@ RUN apt-get update && \
     cd / && rm -rf /opt/xrdp && \
     apt-get remove -yq \
         make autoconf automake libtool pkg-config \
-        wget bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
+        bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
     && \
     apt-get autoremove -yq && \
     apt-get clean
