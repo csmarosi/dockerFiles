@@ -11,6 +11,8 @@ RUN apt-get update && \
         vlc \
         mc wget \
         sxiv \
+        ffmpeg \
+        python3 \
     && \
     apt-get clean
 

@@ -7,6 +7,7 @@ RUN apt-get update && \
         rxvt-unicode-lite ratpoison \
         libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev \
         xfonts-utils \
+        procps \
     && \
     apt-get clean
 

@@ -9,6 +9,7 @@ RUN apt-get update && \
         g++ gdb valgrind strace \
         julia \
         python3-dev ipython3-qtconsole \
+        r-base r-cran-ggplot2 r-cran-rjson \
     && \
     apt-get clean
 

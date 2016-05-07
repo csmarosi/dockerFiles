@@ -3,10 +3,10 @@ FROM debian:sid
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         tor iptables \
-        curl tshark \
+        curl dnsutils tshark \
         tor-arm \
         tor-geoipdb \
-        procps \
+        procps vim \
     && \
     apt-get clean
 

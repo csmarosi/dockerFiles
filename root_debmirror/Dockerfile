@@ -4,6 +4,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         lighttpd \
         debmirror \
+        patch ed \
     && \
     apt-get clean
 
