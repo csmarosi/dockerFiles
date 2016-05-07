@@ -7,4 +7,7 @@ set -e
 /etc/init.d/apache2 start
 /etc/init.d/tt-rss start
 
+echo "30 3 * * * root /tt-rss/backup.sh" > /etc/cron.d/backup
+/etc/init.d/cron start
+
 sleep infinity

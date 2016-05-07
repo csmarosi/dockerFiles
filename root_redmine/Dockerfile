@@ -4,6 +4,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         mysql-client libapache2-mod-passenger apache2 \
         git openssh-client vim \
+        cron \
     && \
     apt-get clean
 
@@ -21,7 +22,10 @@ echo redmine redmine/instances/default/mysql/app-pass password | debconf-set-sel
 apt-get install --no-install-recommends -q -y redmine redmine-mysql
 
 RUN ln -s /usr/share/redmine/public/ /var/www/html/redmine && \
-sed -i '/PassengerDefaultRuby/a PassengerDefaultUser www-data' /etc/apache2/mods-available/passenger.conf
+    sed -e '/PassengerDefaultRuby/a PassengerDefaultUser www-data' \
+        -i /etc/apache2/mods-available/passenger.conf && \
+    sed -i /etc/default/cron -e "/EXTRA_OPTS='-l'/s/^# *//" && \
+    sed -i /etc/pam.d/cron -e '/pam_loginuid.so/d'
 
 COPY root_redmine/setupHacks.sh /root/
 COPY root_redmine/000-default.conf /etc/apache2/sites-available/

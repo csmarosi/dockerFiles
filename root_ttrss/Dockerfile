@@ -4,6 +4,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         mysql-client ca-certificates \
         git openssh-client vim \
+        cron apache2 \
     && \
     apt-get clean
 
@@ -25,7 +26,9 @@ RUN sed -i /etc/default/tt-rss -e 's/DISABLED=1/DISABLED=0/' && \
     sed -i /etc/tt-rss/config.php -e 's!http://example.org!http://127.0.0.1!' && \
     sed -i /etc/mysql/mysql.conf.d/mysqld.cnf \
         -e '/^\[mysqld\]$/a innodb_flush_log_at_trx_commit = 2' && \
-    ln -s /usr/share/tt-rss/www/ /var/www/html/tt-rss
+    ln -s /usr/share/tt-rss/www/ /var/www/html/tt-rss && \
+    sed -i /etc/default/cron -e "/EXTRA_OPTS='-l'/s/^# *//" && \
+    sed -i /etc/pam.d/cron -e '/pam_loginuid.so/d'
 
 COPY root_ttrss/setupHacks.sh /root/
 ENTRYPOINT ["/root/setupHacks.sh"]
