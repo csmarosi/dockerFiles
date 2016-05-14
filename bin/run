@@ -75,13 +75,17 @@ if [[ ${imageName} == "chromium"* ]]; then
         exposePorts=''
     fi
     runCommand=${profileName}
+    runOptions="${runOptions} --cpuset-cpus=0"
 fi
 
 if echo ${imageName} | grep -qE 'ulogme|cfssl' ; then
     runOptions="${runOptions} --net=none"
 fi
 
-if echo ${imageName} | grep -qE 'openvpn|_tor' ; then
+if echo ${imageName} | grep -qE '_tor' ; then
+    runOptions="${runOptions} --cap-add NET_ADMIN"
+fi
+if echo ${imageName} | grep -qE 'openvpn' ; then
     runOptions="${runOptions} --privileged"
 fi
 
@@ -104,11 +108,12 @@ if [[ ! -t 1 ]] || [ ${userId} == 0 ]; then
 fi
 
 homeBind=$(echo ${mountDirs} | grep -o "[^ ]*:${HOME} " | cut -d: -f1)
-test -n "${homeBind}" && cd ${homeBind} && git pull || true
+test -n "${homeBind}" && cd ${homeBind} && timeout 3 git pull || true
 
 exec docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 -e PULSE_SERVER=${PULSE_SERVER} \
+    -e dockerImageName=${imageName} \
     ${exposePorts} \
     ${mountDirs} \
     ${imageName} ${runCommand}
