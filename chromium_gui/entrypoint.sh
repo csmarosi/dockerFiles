@@ -2,17 +2,26 @@
 set -x
 set -e
 
-#Note: This file heavily relies on some of my private files
-cmdArg="${1}"
+cd ${HOME}
+profileGenerator=${HOME}/browser_profiles/chromiumPrivate.py
+if [ -f ${profileGenerator} ]; then
+    cp .ratpoisonrc.common .ratpoisonrc
+else
+    profileGenerator=/tmp/chromium.py
+fi
+
+cat > /tmp/start.sh <<EOF
+export PULSE_SERVER=${PULSE_SERVER}
+export dockerImageName=${dockerImageName}
+exec ${profileGenerator}
+EOF
 
 if [[ "${DISPLAY}" == ":0" ]]; then
-    exec ${HOME}/browser_profiles/${cmdArg}
+    exec bash /tmp/start.sh
 else
     #A password is needed, but on local network does not really matter what
     echo $(whoami):$(whoami) | sudo chpasswd
-    cd ${HOME}
-    cp .ratpoisonrc.common .ratpoisonrc
-    echo "exec bash -c 'PULSE_SERVER=${PULSE_SERVER} ${HOME}/browser_profiles/${cmdArg}'" >> .ratpoisonrc
+    echo 'exec bash /tmp/start.sh' >> .ratpoisonrc
     sudo /etc/init.d/xrdp.sh start
     exec sleep infinity
 fi

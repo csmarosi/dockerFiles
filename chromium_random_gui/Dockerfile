@@ -4,9 +4,10 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         strace \
         chromium-browser pulseaudio \
-        python3 \
+        python3 iputils-ping \
     && \
     apt-get clean
 
-COPY chromium_random_gui/entrypoint.sh /
+COPY chromium_gui/chromium.py /tmp/
+COPY chromium_gui/entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
