@@ -9,7 +9,13 @@ TransPort 9040
 DNSPort 53
 User debian-tor
 DataDirectory /var/lib/tor
+ControlSocket /tmp/tor/ctrl
+
+TrackHostExits .
+TrackHostExitsExpire 36123
 EOF
+socketDir=/tmp/tor
+mkdir ${socketDir} && chmod 700 ${socketDir} && chown debian-tor ${socketDir}
 
 cat > /etc/resolv.conf <<EOF
 nameserver 127.0.0.1

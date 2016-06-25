@@ -8,6 +8,7 @@ test -f ${configFile}
 remoteIp=$(awk '/^remote/{print $2}' ${configFile})
 currentRoute=$(ip route show ${remoteIp}/0 | cut -d' ' -f3)
 ip route add ${remoteIp} via ${currentRoute}
+ip route add 192.168.0.0/16 via ${currentRoute}
 
 openvpn ${configFile} &
 while ! ip addr | grep -Eq 'inet .*(tun|tap)'; do

@@ -6,7 +6,6 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-COPY root_pulse/config.pa /
 COPY root_pulse/setupHacks.sh /root/
 
 EXPOSE 4713

@@ -13,18 +13,18 @@ echo ${@} | grep -q -- --build && pullOnly=false
 
 existingImages="$(docker images | awk '{print $1":"$2}')"
 for image in ${imagesToPull}; do
-    echo "${existingImages}" | grep -q ${image} || ${createMissing} && \
+    echo "${existingImages}" | grep -qw ${image} || ${createMissing} && \
     docker pull ${image}
 done
 
 for myImage in ${imagesToBuild}; do
-    echo "${existingImages}" | grep -q ${myImage} || ${createMissing} && \
+    echo "${existingImages}" | grep -qw ${myImage} || ${createMissing} && \
     ./build.sh ${myImage}
 done
 
 ${pullOnly} && exit 0
 
 for myImage in $(git ls-files | awk -F/ '/Dockerfile/ {print $1}'); do
-    echo "${existingImages}" | grep -q ${myImage} || ${createMissing} && \
+    echo "${existingImages}" | grep -qw ${myImage} || ${createMissing} && \
     ./build.sh ${myImage} || true
 done
