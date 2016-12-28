@@ -7,6 +7,10 @@ RUN apt-get update && \
         openjdk-7-jdk ant \
         git x11-apps file strace \
         libgl1-mesa-dri \
+        sudo procps \
+        python curl zip make schedtool bc \
+        abootimg cpio \
+        eclipse \
     && \
     apt-get clean
 

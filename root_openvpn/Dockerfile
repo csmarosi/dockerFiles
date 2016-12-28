@@ -1,12 +1,20 @@
-FROM debian
+FROM debian:sid
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-        openvpn dnsutils \
-        wget curl \
+        tor iptables \
+        openvpn \
+        curl dnsutils tshark wget \
+        tor-arm \
+        tor-geoipdb \
+        obfsproxy \
+        procps vim \
+        python3 \
+        mitmproxy \
     && \
     apt-get clean
 
-COPY root_openvpn/setupHacks.sh /root/
+ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
 
+COPY root_openvpn/setupHacks.sh /root/
 ENTRYPOINT ["/root/setupHacks.sh"]
