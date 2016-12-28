@@ -1,4 +1,4 @@
-FROM debian:sid
+FROM debian
 MAINTAINER Csaba Marosi "4bea6c869366227b879ffe4abad50c@gmail.com"
 
 RUN apt-get update && \
@@ -8,6 +8,7 @@ RUN apt-get update && \
         libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev \
         xfonts-utils \
         procps \
+        python python-lxml python-libxml2 \
         wget \
     && \
     apt-get clean
@@ -15,7 +16,7 @@ RUN apt-get update && \
 # For a smaller image, remove build tools & artifacts after compilation.
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-        make autoconf automake libtool pkg-config \
+        make autoconf automake libtool pkg-config xz-utils \
         bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
     && \
     cd /opt && \
@@ -33,7 +34,7 @@ RUN apt-get update && \
     cp /etc/xrdp/xrdp.sh /etc/init.d/ && \
     cd / && rm -rf /opt/xrdp && \
     apt-get remove -yq \
-        make autoconf automake libtool pkg-config \
+        make autoconf automake libtool pkg-config xz-utils \
         bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
     && \
     apt-get autoremove -yq && \

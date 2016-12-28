@@ -9,6 +9,9 @@ shift
 
 mountDirs="-v ${HOME}/dockerVolumes/dothome:${HOME}"
 mountDirsFile=${HOME}/dockerVolumes/${imageName}.vol
+if echo ${imageName} | grep -qE 'chrom(e|ium)'; then
+    mountDirs=''
+fi
 if [ -s ${mountDirsFile} ]; then
     mountDirs="$(cat ${mountDirsFile})"
 fi
@@ -27,6 +30,7 @@ if [ -n "${runCommand}" ]; then
     if docker ps --no-trunc | grep -qE "^${runCommand}|${runCommand}$" ; then
         runOptions="--net=container:${runCommand} ${runOptions}"
         exposePorts=''
+        runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     fi
     filePath=$(readlink -f "${runCommand}")
     if [ -f "${filePath}" ]; then
@@ -43,9 +47,15 @@ if echo "${imageName}" | grep -qE '^wine|^multimedia'; then
     runOptions+=" --group-add audio"
 fi
 
-if [[ ${imageName} == *"gui" ]] && [[ "${DISPLAY}" == ":0" ]]; then
-    xhost local:
-    mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
+if [[ ${imageName} == *"gui" ]]; then
+    XDisplay=$(echo ${mountDirs} | grep -o -- '-unix/X[0-9]*:' | tail -n1)
+    if echo ${XDisplay} | grep -q '/X'; then
+        DISPLAY=:$(echo ${XDisplay} | grep -o '[0-9]*')
+    fi
+    if [[ "${DISPLAY}" == ":0" ]]; then
+        xhost local:
+        mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
+    fi
 fi
 
 if [[ ${imageName} == "dev"* ]]; then
@@ -68,19 +78,15 @@ if [[ ${imageName} == "chromium"* ]]; then
     runOptions="${runOptions} --cpuset-cpus=0"
 fi
 
-if echo ${imageName} | grep -qE 'ulogme|cfssl' ; then
+if echo ${imageName} | grep -qE '^ulogme|^cfssl' ; then
     runOptions="${runOptions} --net=none"
 fi
 
-if echo ${imageName} | grep -qE '_tor' ; then
+if echo ${imageName} | grep -qE '^root_tor' ; then
     runOptions="${runOptions} --cap-add NET_ADMIN"
 fi
-if echo ${imageName} | grep -qE 'openvpn' ; then
+if echo ${imageName} | grep -qE '^root_openvpn' ; then
     runOptions="${runOptions} --privileged"
-fi
-
-if [[ ${imageName} == "playground"* ]]; then
-    runOptions="$(echo ${runOptions} | sed 's!--rm!!')"
 fi
 
 
