@@ -27,7 +27,7 @@ RUN apt-get update && \
     make && \
     make install && \
     xrdp-keygen xrdp auto && \
-    cp instfiles/pam.d/xrdp-sesman.other /etc/pam.d/xrdp-sesman && \
+    cp instfiles/pam.d/xrdp-sesman.debian /etc/pam.d/xrdp-sesman && \
     cd /opt/xrdp/xorg/X11R7.6 && \
     ./buildx.sh /opt/X11rdp && \
     ln -s /opt/X11rdp/bin/X11rdp /usr/local/bin/X11rdp && \
