@@ -18,6 +18,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         make autoconf automake libtool pkg-config xz-utils \
         bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
+        nasm \
     && \
     cd /opt && \
     git clone --recursive https://github.com/neutrinolabs/xrdp.git && \
@@ -36,6 +37,7 @@ RUN apt-get update && \
     apt-get remove -yq \
         make autoconf automake libtool pkg-config xz-utils \
         bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
+        nasm \
     && \
     apt-get autoremove -yq && \
     apt-get clean
