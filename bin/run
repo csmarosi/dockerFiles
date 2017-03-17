@@ -15,23 +15,29 @@ fi
 if [ -s ${mountDirsFile} ]; then
     mountDirs="$(cat ${mountDirsFile})"
 fi
-exposePorts='-P'
-exposePortsFile=${HOME}/dockerVolumes/${imageName}.port
-if [ -s ${exposePortsFile} ]; then
-    exposePorts="$(cat ${exposePortsFile})"
-fi
 hostName=$(echo ${imageName} | sed 's/_//g')
 runOptions="--hostname=${hostName} --name=${hostName} --rm -it"
 groupId=$(id -g)
 userId=$(id -u)
 
+networkOptions='-P'
+exposePortsFile=${HOME}/dockerVolumes/${imageName}.port
+if [ -s ${exposePortsFile} ]; then
+    networkOptions="$(cat ${exposePortsFile})"
+fi
+# Probably my preference should not be hardcoded as below,
+#  but it should still work in a general environment as well
+if docker network ls | grep -q internalbr ; then
+    networkOptions+=" --net=internalbr"
+fi
+
+if [ -n "${1}" ] && docker ps --no-trunc | grep -qE "^${1}|${1}$" ; then
+    networkOptions="--net=container:${1}"
+    runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
+    shift
+fi
 runCommand="${@}"
 if [ -n "${runCommand}" ]; then
-    if docker ps --no-trunc | grep -qE "^${runCommand}|${runCommand}$" ; then
-        runOptions="--net=container:${runCommand} ${runOptions}"
-        exposePorts=''
-        runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
-    fi
     filePath=$(readlink -f "${runCommand}")
     if [ -f "${filePath}" ]; then
         dirName=$(dirname "${filePath}")
@@ -79,7 +85,7 @@ if [[ ${imageName} == "chromium"* ]]; then
 fi
 
 if echo ${imageName} | grep -qE '^ulogme|^cfssl' ; then
-    runOptions="${runOptions} --net=none"
+    networkOptions="--net=none"
 fi
 
 if echo ${imageName} | grep -qE '^root_tor' ; then
@@ -110,6 +116,6 @@ exec docker run ${runOptions} -u=${userId}:${groupId} \
     -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
     -e QT_X11_NO_MITSHM=1 -e PULSE_SERVER=${PULSE_SERVER} \
     -e dockerImageName=${imageName} \
-    ${exposePorts} \
+    ${networkOptions} \
     ${mountDirs} \
     ${imageName} ${runCommand}

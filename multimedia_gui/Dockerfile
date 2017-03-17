@@ -13,6 +13,7 @@ RUN apt-get update && \
         sxiv \
         ffmpeg \
         python3 \
+        libid3-tools \
     && \
     apt-get clean
 
