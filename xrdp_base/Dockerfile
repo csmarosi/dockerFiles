@@ -7,9 +7,8 @@ RUN apt-get update && \
         rxvt-unicode-lite ratpoison \
         libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev \
         xfonts-utils \
-        procps \
         python python-lxml python-libxml2 \
-        wget \
+        procps wget \
     && \
     apt-get clean
 
