@@ -8,6 +8,7 @@ RUN apt-get update && \
         xmobar \
         xmonad libghc-xmonad-contrib-dev \
         x11-xserver-utils xloadimage \
+        x11-xkb-utils xkb-data \
         ratpoison- \
     && \
     apt-get clean

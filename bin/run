@@ -4,12 +4,13 @@ set -x
 
 docker images | sort
 test -n "${1}"
-imageName=${1}
+imageWithTag=${1}
+imageName=$(echo ${imageWithTag} | cut -d: -f1)
 shift
 
 mountDirs="-v ${HOME}/dockerVolumes/dothome:${HOME}"
 mountDirsFile=${HOME}/dockerVolumes/${imageName}.vol
-if echo ${imageName} | grep -qE 'chrom(e|ium)'; then
+if echo ${imageName} | grep -qE 'chrom(e|ium)|^root_'; then
     mountDirs=''
 fi
 if [ -s ${mountDirsFile} ]; then
@@ -118,4 +119,4 @@ exec docker run ${runOptions} -u=${userId}:${groupId} \
     -e dockerImageName=${imageName} \
     ${networkOptions} \
     ${mountDirs} \
-    ${imageName} ${runCommand}
+    ${imageWithTag} ${runCommand}

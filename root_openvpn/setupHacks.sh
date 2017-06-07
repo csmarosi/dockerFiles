@@ -2,6 +2,8 @@
 set -x
 set -e
 
+test -f /magic2/script_to_execute.sh && bash $_ || true
+
 configFile=/magic/${1}
 test -f ${configFile}
 

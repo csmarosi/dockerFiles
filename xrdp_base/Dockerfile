@@ -13,6 +13,7 @@ RUN apt-get update && \
     apt-get clean
 
 # For a smaller image, remove build tools & artifacts after compilation.
+# Note: The sed reverts git commit a2d9272bc93fde7339599b04c54a65fefbdcab88
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         make autoconf automake libtool pkg-config xz-utils \
@@ -22,6 +23,8 @@ RUN apt-get update && \
     cd /opt && \
     git clone --recursive https://github.com/neutrinolabs/xrdp.git && \
     cd xrdp && \
+    sed -e '/^\[Xorg\]/,/^\[X11rdp\]/{//!d}' -i xrdp/xrdp.ini && \
+    sed -e '/^\[Xorg\]/d' -i xrdp/xrdp.ini && \
     ./bootstrap && \
     ./configure && \
     make && \

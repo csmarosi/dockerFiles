@@ -7,6 +7,7 @@ RUN apt-get update && \
         bochs-x \
         git git-svn vim \
         sudo usbutils \
+        procps curl \
     && \
     apt-get clean
 
