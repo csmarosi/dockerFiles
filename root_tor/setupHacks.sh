@@ -22,6 +22,8 @@ nameserver 127.0.0.1
 EOF
 
 iptables -F
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
 iptables -t nat -F
 _tor_uid=$(awk -F: '/^debian-tor:/{print $3}' /etc/passwd)
 iptables -t nat -A OUTPUT -o tun+ -j RETURN

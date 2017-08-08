@@ -29,7 +29,9 @@ fi
 # Probably my preference should not be hardcoded as below,
 #  but it should still work in a general environment as well
 if docker network ls | grep -q internalbr ; then
-    networkOptions+=" --net=internalbr"
+    if ! echo "${networkOptions}" | grep -q 'net=' ; then
+        networkOptions+=" --net=internalbr"
+    fi
 fi
 
 if [ -n "${1}" ] && docker ps --no-trunc | grep -qE "^${1}|${1}$" ; then
@@ -47,7 +49,7 @@ if [ -n "${runCommand}" ]; then
     fi
 fi
 
-if echo "${imageName}" | grep -qE '^wine|^multimedia'; then
+if echo "${imageName}" | grep -qE '^wine|^multimedia|_pulse$'; then
     runOptions+=" --device /dev/dri"
     runOptions+=" --group-add video"
     runOptions+=" --device /dev/snd"
@@ -75,7 +77,7 @@ if [[ ${imageName} == "root"* ]]; then
     runOptions="$(echo ${runOptions} | sed 's!--rm!!')"
 fi
 
-if [[ ${imageName} == "chromium"* ]]; then
+if echo ${imageName} | grep -qE '^(chrom|firefox)' ; then
     # Chrome leaks hostname: https://isc.sans.edu/diary/Google+Chrome+and+(weird)+DNS+requests/10312
     runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     #TODO: check this after chromium issue 522853 is closed

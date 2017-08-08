@@ -1,4 +1,4 @@
-FROM debian
+FROM debian:jessie
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \

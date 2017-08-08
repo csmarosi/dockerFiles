@@ -6,10 +6,11 @@ RUN apt-get update && \
         fonts-liberation ghostscript imagemagick \
         libreoffice hunspell-en-us \
         pandoc \
-        latex-beamer texlive-latex-extra \
+        texlive-latex-recommended texlive-latex-extra \
         texlive-fonts-extra texlive-fonts-recommended lmodern \
-        graphviz \
         sxiv pinta \
+        okular \
+        kcachegrind graphviz \
     && \
     apt-get clean
 

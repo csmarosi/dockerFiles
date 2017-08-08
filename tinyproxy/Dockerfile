@@ -9,4 +9,4 @@ RUN apt-get update && \
 
 COPY tinyproxy/tinyproxy.conf /etc/
 USER proxy
-ENTRYPOINT ["tinyproxy", "-d"]
+ENTRYPOINT ["tinyproxy", "-d", "-c", "/etc/tinyproxy.conf"]

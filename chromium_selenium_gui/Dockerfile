@@ -14,6 +14,7 @@ RUN apt-get update && \
 RUN apt-get install --no-install-recommends -y -q \
         unzip \
         rxvt-unicode-lite procps \
+        python3-requests openssh-client \
         sudo \
     && \
     echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo

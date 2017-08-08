@@ -6,6 +6,7 @@ RUN apt-get update && \
         sudo git vim ca-certificates \
         rxvt-unicode-lite ratpoison \
         libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev \
+        zlib1g-dev \
         xfonts-utils \
         python python-lxml python-libxml2 \
         procps wget \
