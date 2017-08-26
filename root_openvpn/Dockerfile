@@ -1,18 +1,18 @@
-FROM debian:sid
+FROM debian
 
 RUN apt-get update && \
-    echo wireshark-common	wireshark-common/install-setuid	boolean	false | debconf-set-selections && \
     apt-get install --no-install-recommends -y -q \
         tor iptables \
+        tor-arm tor-geoipdb obfsproxy \
         openvpn \
-        curl dnsutils tshark wget \
-        tor-arm \
-        tor-geoipdb \
-        obfsproxy \
         procps vim \
         python3 python3-requests \
         libssl-dev gcc \
         python3-pip python3-setuptools python3-dev \
+        youtube-dl \
+        tcptraceroute netcat-traditional \
+        tshark wireshark \
+        curl dnsutils wget echoping namebench \
     && \
     apt-get clean
 

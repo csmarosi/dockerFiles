@@ -8,6 +8,6 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-RUN echo 'deb http://172.17.42.1/debian stretch main' > /etc/apt/sources.list
+RUN echo 'deb http://172.17.0.1/debian stretch main' > /etc/apt/sources.list
 
 CMD ["/usr/sbin/lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]

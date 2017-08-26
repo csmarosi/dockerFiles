@@ -10,6 +10,7 @@ RUN apt-get update && \
         julia \
         python3-dev ipython3-qtconsole \
         r-base r-cran-ggplot2 r-cran-rjson r-cran-reshape2 \
+        r-cran-knitr r-cran-data.table \
     && \
     apt-get clean
 

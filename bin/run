@@ -14,7 +14,7 @@ if echo ${imageName} | grep -qE 'chrom(e|ium)|^root_'; then
     mountDirs=''
 fi
 if [ -s ${mountDirsFile} ]; then
-    mountDirs="$(cat ${mountDirsFile})"
+    mountDirs="$(eval echo $(cat ${mountDirsFile}))"
 fi
 hostName=$(echo ${imageName} | sed 's/_//g')
 runOptions="--hostname=${hostName} --name=${hostName} --rm -it"

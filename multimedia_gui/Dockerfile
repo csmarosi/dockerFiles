@@ -4,9 +4,10 @@ RUN sed -i /etc/apt/sources.list \
         -e 's! main$! main non-free contrib!' \
         -e '$a deb http://www.deb-multimedia.org/ sid main non-free'
 
-RUN apt-get update && \
-    apt-get install --force-yes -yq deb-multimedia-keyring && \
-    apt-get install --no-install-recommends --force-yes -y -q \
+RUN apt-get -oAcquire::AllowInsecureRepositories=true update && \
+    apt-get -oAcquire::AllowInsecureRepositories=true \
+        install --allow-unauthenticated -yq deb-multimedia-keyring && \
+    apt-get install --no-install-recommends --allow-unauthenticated -y -q \
         pulseaudio mplayer \
         vlc \
         mc wget \

@@ -1,7 +1,7 @@
-FROM debian:sid
+FROM debian
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends --force-yes -y -q \
+    apt-get install --no-install-recommends -y -q \
         dnscrypt-proxy \
         dnsutils \
         dnsmasq \
