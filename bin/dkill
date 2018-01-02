@@ -2,7 +2,7 @@
 set -e
 set -x
 
-docker ps -a --no-trunc
+docker ps -a --no-trunc --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}"
 test -n "${1}"
 test -z "${2}"
 

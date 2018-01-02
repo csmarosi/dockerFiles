@@ -2,7 +2,8 @@ FROM debian
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
-        firefox \
+        firefox-esr pulseaudio \
+        python3 \
     && \
     apt-get clean
 

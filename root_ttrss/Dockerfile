@@ -5,6 +5,7 @@ RUN apt-get update && \
         mysql-client ca-certificates \
         git openssh-client vim \
         cron apache2 \
+        dnsmasq \
     && \
     apt-get clean
 

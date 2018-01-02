@@ -9,7 +9,7 @@ RUN apt-get update && \
         python3 python3-requests \
         libssl-dev gcc \
         python3-pip python3-setuptools python3-dev \
-        youtube-dl \
+        youtube-dl openssh-client \
         tcptraceroute netcat-traditional \
         tshark wireshark \
         curl dnsutils wget echoping namebench \

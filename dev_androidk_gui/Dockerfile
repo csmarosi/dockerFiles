@@ -11,14 +11,13 @@ RUN apt-get update && \
         python curl zip make schedtool bc \
         abootimg cpio \
         eclipse \
+        imagemagick unzip \
+        bison build-essential fakeroot flex gperf \
+        libalgorithm-diff-xs-perl libalgorithm-merge-perl \
+        libfile-fcntllock-perl libxml2-utils \
+        lzop \
     && \
     apt-get clean
-
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
-        bison build-essential flex gnupg gperf libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libxml2 libxml2-utils lzop maven pngcrush squashfs-tools xsltproc zlib1g-dev \
-        g++-multilib gcc-multilib lib32ncurses5-dev lib32z1-dev \
-        make
 
 RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo
 
