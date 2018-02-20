@@ -12,7 +12,7 @@ all: clean
 
 	coverage combine && coverage report && coverage html
 	pyflakes *py
-	pep8 *py
+	pycodestyle *py
 	find . -type f -name '*.py' | xargs yapf -i
 
 clean:

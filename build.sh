@@ -15,5 +15,8 @@ for imageName in ${@}; do
         bash ${imageName}/Dockerfile.sh > ${dockerFile}
     fi
     docker build ${buildOptions} -t ${imageName} -f ${dockerFile} .
-    docker tag ${imageName} ${imageName}:$(date +%Y%m%d)
+    hashId=$(docker images | grep "^${imageName} " | awk '/latest/{print $3}')
+    if [ "$(docker images | grep ${hashId} | wc -l)" -lt 2 ]; then
+        docker tag ${imageName} ${imageName}:$(date +%Y%m%d)
+    fi
 done

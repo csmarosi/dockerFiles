@@ -12,30 +12,55 @@ import json
 
 def getDefaultPreferences():
     default_search_provider_data = {
-        "template_url_data":
-        {"short_name": "DuckDuckGo",
-         "url": "https://duckduckgo.com/html?q={searchTerms}",
-         "keyword": "duckduckgo.com"}
+        "template_url_data": {
+            "short_name": "DuckDuckGo",
+            "url": "https://duckduckgo.com/html?q={searchTerms}",
+            "keyword": "duckduckgo.com"
+        }
     }
     pref = {
-        "safebrowsing": {"enabled": False},
+        "safebrowsing": {
+            "enabled": False
+        },
         "default_search_provider_data": default_search_provider_data,
-        "download": {"prompt_for_download": True},
-        "translate": {"enabled": False},
-        "search": {"suggest_enabled": False},
-        "net": {"network_prediction_options": 2},
+        "download": {
+            "prompt_for_download": True
+        },
+        "translate": {
+            "enabled": False
+        },
+        "search": {
+            "suggest_enabled": False
+        },
+        "net": {
+            "network_prediction_options": 2
+        },
         # Use a web service to help resolve navigation errors
-        "alternate_error_pages": {"enabled": False},
+        "alternate_error_pages": {
+            "enabled": False
+        },
         # Google Cloud Print
-        "local_discovery": {"notifications_enabled": False},
-        "dns_prefetching": {"enabled": False},
+        "local_discovery": {
+            "notifications_enabled": False
+        },
+        "dns_prefetching": {
+            "enabled": False
+        },
         "extensions": {
             # Prevent calling home like https://new.gcm.hostname:5228
-            "settings": {"pafkbggdmjlpgkdkcbjmhmfcdpncadgh": {"state": 0}},
-            "theme": {"use_system": True}
+            "settings": {
+                "pafkbggdmjlpgkdkcbjmhmfcdpncadgh": {
+                    "state": 0
+                }
+            },
+            "theme": {
+                "use_system": True
+            }
         },
-        "bookmark_bar": {"show_on_all_tabs": True,
-                         "show_apps_shortcut": False}
+        "bookmark_bar": {
+            "show_on_all_tabs": True,
+            "show_apps_shortcut": False
+        }
     }
     return pref
 
@@ -46,9 +71,12 @@ class ChromiumBase(object):
         self.arguments = ['--no-sandbox', '--disable-smooth-scrolling']
 
     def getExePath(self):
-        guesses = ['/usr/bin/google-chrome',
-                   '/tmp/bTestaa750145402ddf8c9bc7acd17f3b65ba',
-                   '/usr/bin/chromium', '/usr/bin/chromium-browser']
+        guesses = [
+            '/usr/bin/google-chrome',
+            '/tmp/bTestaa750145402ddf8c9bc7acd17f3b65ba',
+            '/usr/bin/chromium',
+            '/usr/bin/chromium-browser',
+        ]
         for guess in guesses:
             if os.path.isfile(guess):
                 self.exe = guess

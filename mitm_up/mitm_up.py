@@ -16,10 +16,11 @@ def request(flow):
     print('request():', host, url)
     if any(map(lambda s: host.startswith(s), ignoreHosts)):
         return
-    resp = HTTPResponse.make(303, url, {
-        'Content_Type': "text/html",
-        'Location': url.replace('http://', 'https://', 1)
-    })
+    resp = HTTPResponse.make(
+        303, url, {
+            'Content_Type': "text/html",
+            'Location': url.replace('http://', 'https://', 1)
+        })
     now = time.time()
     if context.insecure_urls[url] + 61 > now:
         resp = HTTPResponse.make(500, "mitm seen before" + url, {})

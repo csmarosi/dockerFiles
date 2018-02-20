@@ -22,5 +22,7 @@ RUN pip3 install wheel && \
 
 ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
 
-COPY root_mitm_up/upgrade.py /mitm/
-ENTRYPOINT ["mitmdump", "-p", "8080", "-s", "/mitm/upgrade.py", "--ignore", "."]
+USER proxy
+ENV HOME=/tmp
+COPY mitm_up/mitm_up.py /mitm/
+ENTRYPOINT ["mitmdump", "-p", "8080", "-s", "/mitm/mitm_up.py", "--ignore", "."]

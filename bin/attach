@@ -1,10 +1,9 @@
 #!/bin/bash
-set -e
-set -x
+set -euxo pipefail
 
-docker ps -a --no-trunc --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}"
-test -n "${1}"
-test -z "${2}"
+if [ $# -eq 0 ] ; then
+    docker ps -a --no-trunc --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}"
+fi
 
 docker start ${1}
 exec docker attach ${1}

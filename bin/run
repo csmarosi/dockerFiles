@@ -1,10 +1,7 @@
 #!/bin/bash
-set -e
-set -x
+set -euxo pipefail
 
-docker images | sort
-test -n "${1}"
-imageWithTag=${1}
+imageWithTag="${1}"
 imageName=$(echo ${imageWithTag} | cut -d: -f1)
 shift
 
@@ -34,7 +31,7 @@ if docker network ls | grep -q internalbr ; then
     fi
 fi
 
-if [ -n "${1}" ] && docker ps --no-trunc | grep -qE "^${1}|${1}$" ; then
+if [ $# -gt 0 ] && docker ps --no-trunc | grep -qE "^${1}|${1}$" ; then
     networkOptions="--net=container:${1}"
     runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     shift
@@ -57,11 +54,11 @@ if echo "${imageName}" | grep -qE '^wine|^multimedia|_pulse$'; then
 fi
 
 if [[ ${imageName} == *"gui" ]]; then
-    XDisplay=$(echo ${mountDirs} | grep -o -- '-unix/X[0-9]*:' | tail -n1)
+    XDisplay=$(echo ${mountDirs} | grep -o -- '-unix/X[0-9]*:' | tail -n1 || true)
     if echo ${XDisplay} | grep -q '/X'; then
         DISPLAY=:$(echo ${XDisplay} | grep -o '[0-9]*')
     fi
-    if [[ "${DISPLAY}" == ":0" ]]; then
+    if [[ "${DISPLAY-}" == ":0" ]]; then
         xhost local:
         mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
     fi
@@ -112,12 +109,14 @@ if [[ ! -t 1 ]] || [ ${userId} == 0 ]; then
     runOptions="$(echo ${runOptions} | sed 's!-it!!')"
 fi
 
-homeBind=$(echo ${mountDirs} | grep -o "[^ ]*:${HOME} " | cut -d: -f1)
+homeBind=$(echo ${mountDirs} | grep -o "[^ ]*:${HOME} " | cut -d: -f1) || true
 test -n "${homeBind}" && cd ${homeBind} && timeout 3 git pull || true
 
+docker images | awk '{print $1":"$2}' | grep "${imageWithTag}"
+
 exec docker run ${runOptions} -u=${userId}:${groupId} \
-    -e HOME=${HOME} -e DISPLAY=${DISPLAY} -e SHELL=${SHELL} \
-    -e QT_X11_NO_MITSHM=1 -e PULSE_SERVER=${PULSE_SERVER} \
+    -e HOME=${HOME} -e DISPLAY=${DISPLAY-} -e SHELL=${SHELL} \
+    -e QT_X11_NO_MITSHM=1 -e PULSE_SERVER=${PULSE_SERVER-} \
     -e dockerImageName=${imageName} \
     ${networkOptions} \
     ${mountDirs} \

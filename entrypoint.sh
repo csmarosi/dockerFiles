@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -exo pipefail
 
 cmdArg="${1}"
 fileToOpen=/magic/$(basename ${cmdArg} || true)

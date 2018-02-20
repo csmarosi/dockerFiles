@@ -8,7 +8,7 @@ RUN apt-get update && \
     apt-get clean
 
 RUN pip3 install \
-        pytest-quickcheck pyflakes pep8 coverage \
+        pytest-quickcheck pyflakes pycodestyle coverage \
         tweepy pykka \
         ipython matplotlib numpy \
         scikit-learn \
