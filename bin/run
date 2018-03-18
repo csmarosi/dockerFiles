@@ -23,13 +23,6 @@ exposePortsFile=${HOME}/dockerVolumes/${imageName}.port
 if [ -s ${exposePortsFile} ]; then
     networkOptions="$(cat ${exposePortsFile})"
 fi
-# Probably my preference should not be hardcoded as below,
-#  but it should still work in a general environment as well
-if docker network ls | grep -q internalbr ; then
-    if ! echo "${networkOptions}" | grep -q 'net=' ; then
-        networkOptions+=" --net=internalbr"
-    fi
-fi
 
 if [ $# -gt 0 ] && docker ps --no-trunc | grep -qE "^${1}|${1}$" ; then
     networkOptions="--net=container:${1}"
@@ -46,13 +39,6 @@ if [ -n "${runCommand}" ]; then
     fi
 fi
 
-if echo "${imageName}" | grep -qE '^wine|^multimedia|_pulse$'; then
-    runOptions+=" --device /dev/dri"
-    runOptions+=" --group-add video"
-    runOptions+=" --device /dev/snd"
-    runOptions+=" --group-add audio"
-fi
-
 if [[ ${imageName} == *"gui" ]]; then
     XDisplay=$(echo ${mountDirs} | grep -o -- '-unix/X[0-9]*:' | tail -n1 || true)
     if echo ${XDisplay} | grep -q '/X'; then
@@ -62,10 +48,6 @@ if [[ ${imageName} == *"gui" ]]; then
         xhost local:
         mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
     fi
-fi
-
-if [[ ${imageName} == "dev"* ]]; then
-    mountDirs="${mountDirs} -v ${HOME}/github_projects:${HOME}/github_projects"
 fi
 
 if [[ ${imageName} == "root"* ]]; then
@@ -82,17 +64,6 @@ if echo ${imageName} | grep -qE '^(chrom|firefox)' ; then
     mountDirs="${mountDirs} -v ${tmpDir}:/dev/shm"
     # Use only 1 CPU
     runOptions="${runOptions} --cpuset-cpus=0"
-fi
-
-if echo ${imageName} | grep -qE '^ulogme|^cfssl' ; then
-    networkOptions="--net=none"
-fi
-
-if echo ${imageName} | grep -qE '^root_tor' ; then
-    runOptions="${runOptions} --cap-add NET_ADMIN"
-fi
-if echo ${imageName} | grep -qE '^root_openvpn' ; then
-    runOptions="${runOptions} --privileged"
 fi
 
 
@@ -112,6 +83,7 @@ fi
 homeBind=$(echo ${mountDirs} | grep -o "[^ ]*:${HOME} " | cut -d: -f1) || true
 test -n "${homeBind}" && cd ${homeBind} && timeout 3 git pull || true
 
+#Do not try to start non-local image
 docker images | awk '{print $1":"$2}' | grep "${imageWithTag}"
 
 exec docker run ${runOptions} -u=${userId}:${groupId} \

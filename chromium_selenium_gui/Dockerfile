@@ -5,19 +5,24 @@ RUN apt-get update && \
         strace \
         chromium pulseaudio \
         python3 \
-        chromium-driver python3-selenium \
-        scala \
+        chromium-driver python3-selenium scala \
+        curl unzip \
+        rxvt-unicode-lite procps x11-apps vim \
+        python3-requests openssh-client openjdk-8-jdk \
+        sudo \
+    && \
+    echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
     && \
     apt-get clean
 
-#http://selenium-release.storage.googleapis.com/3.1/selenium-java-3.1.0.zip
-RUN apt-get install --no-install-recommends -y -q \
-        unzip \
-        rxvt-unicode-lite procps \
-        python3-requests openssh-client \
-        sudo \
-    && \
-    echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo
+RUN mkdir /opt/selenium-java && cd /opt/selenium-java && \
+    curl https://selenium-release.storage.googleapis.com/3.1/selenium-java-3.1.0.zip -o /tmp/x.zip && \
+    unzip /tmp/x.zip && rm /tmp/x.zip && \
+    chmod 755 -Rc .
+RUN curl https://downloads.typesafe.com/scalaide-pack/4.7.0-vfinal-oxygen-212-20170929/scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz | tar -zx -C /opt/
+RUN mkdir /opt/gradle && \
+    curl https://downloads.gradle.org/distributions/gradle-4.6-bin.zip -o /tmp/x.zip && \
+    unzip -d /opt/gradle /tmp/x.zip && rm /tmp/x.zip
 
 #optional wireshark
 RUN true || (apt-get update && \
@@ -25,4 +30,5 @@ RUN true || (apt-get update && \
 
 COPY chromium_gui/chromium.py /tmp/
 COPY chromium_gui/entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
+
+ENTRYPOINT ["/bin/bash"]
