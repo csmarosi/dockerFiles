@@ -65,6 +65,16 @@ def getDefaultPreferences():
     return pref
 
 
+def mergePreferences(destination, source):
+    for key in source:
+        if isinstance(source[key], dict):
+            if key not in destination:
+                destination[key] = {}
+            mergePreferences(destination[key], source[key])
+        else:
+            destination[key] = source[key]
+
+
 class ChromiumBase(object):
     def __init__(self):
         super(ChromiumBase, self).__init__()
@@ -111,17 +121,21 @@ class ChromiumBase(object):
         except (IOError, KeyError):
             pass
 
-        def mergePreferences(destination, source):
-            for key in source:
-                if isinstance(source[key], dict):
-                    if key not in destination:
-                        destination[key] = {}
-                    mergePreferences(destination[key], source[key])
-                else:
-                    destination[key] = source[key]
-
         mergePreferences(self.Preferences, self.changePreferences())
         mergePreferences(prefData, self.Preferences)
+        with open(prefFile, 'w') as data_file:
+            json.dump(prefData, data_file)
+
+    def writeLocalState(self):
+        prefFile = self.profilePath + '/Local State'
+        prefData = {}
+        try:
+            with open(prefFile, 'r') as data_file:
+                prefData = json.load(data_file)
+        except (IOError, KeyError):
+            pass
+        noHwAccel = {"hardware_acceleration_mode": {"enabled": False}}
+        mergePreferences(prefData, noHwAccel)
         with open(prefFile, 'w') as data_file:
             json.dump(prefData, data_file)
 
@@ -142,6 +156,7 @@ class ChromiumBase(object):
         self.createFistRun()
         self.createPreferences()
         self.writePreferences()
+        self.writeLocalState()
         self.execBrowser()
 
 

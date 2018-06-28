@@ -16,7 +16,8 @@ def request(flow):
         flow.request.host = origHost
     else:
         flow.response = HTTPResponse.make(418)
-    print('requestH(' + flow.request.url + ')', flow.request.headers)
+    if False:
+        print('requestH(' + flow.request.url + ')', flow.request.headers)
 
 
 def rmRegexp(data, regexp):

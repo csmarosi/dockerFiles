@@ -22,7 +22,7 @@ RUN apt-get update && \
         nasm \
     && \
     cd /opt && \
-    git clone --recursive https://github.com/neutrinolabs/xrdp.git && \
+    git clone --recursive https://github.com/neutrinolabs/xrdp.git -b v0.9.6 && \
     cd xrdp && \
     sed -i xrdp/xrdp.ini.in \
         -e '/^\[Xorg\]/,/^\[X11rdp\]/{//!d}' \

@@ -25,4 +25,4 @@ ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
 USER proxy
 ENV HOME=/tmp
 COPY mitm_http/mitm_http.py /mitm/
-ENTRYPOINT ["mitmdump", "-p", "8080", "-s", "/mitm/mitm_http.py", "-T"]
+ENTRYPOINT ["mitmdump", "-p", "8080", "-s", "/mitm/mitm_http.py", "-T", "--quiet"]
