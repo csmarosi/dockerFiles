@@ -3,7 +3,7 @@ FROM debian
 RUN apt-get update && \
     apt-get install --no-install-recommends -y -q \
         openssh-server git vim \
-        cron \
+        cron gpg \
     && \
     apt-get clean
 

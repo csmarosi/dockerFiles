@@ -11,9 +11,10 @@ RUN apt-get update && \
         python3-requests openssh-client openjdk-8-jdk \
         sudo \
     && \
-    echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
-    && \
     apt-get clean
+
+RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
+    && echo 'root:p' | chpasswd
 
 RUN mkdir /opt/selenium-java && cd /opt/selenium-java && \
     curl https://selenium-release.storage.googleapis.com/3.1/selenium-java-3.1.0.zip -o /tmp/x.zip && \

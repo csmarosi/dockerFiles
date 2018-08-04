@@ -18,7 +18,7 @@ RUN apt-get update && \
 
 RUN pip3 install wheel && \
     pip3 install pexpect && \
-    pip3 install mitmproxy==2.0.2
+    pip3 install mitmproxy==3.0.4
 
 ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
 

@@ -9,6 +9,7 @@ RUN apt-get update && \
         xmonad libghc-xmonad-contrib-dev \
         x11-xserver-utils xloadimage \
         x11-xkb-utils xkb-data \
+        keepassx git openssh-client \
         ratpoison- \
     && \
     apt-get clean

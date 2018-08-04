@@ -1,95 +1,206 @@
+import os
 import re
 from mitmproxy.http import HTTPResponse
 
-FORCE_HTTPS = False
-FILTER_CONTENT = ['text/plain', 'text/html', 'text/css']
-OK_REDIRECT = ['t.co']
+FILTER_CONTENT = None
+FORCE_HTTPS = None
+LOG_LEVEL = None
 
-known_secure_hosts = set()
+
+def start():
+    global FILTER_CONTENT
+    global FORCE_HTTPS
+    global LOG_LEVEL
+    FILTER_CONTENT = False if os.getenv('FILTER_CONTENT', '') == '0' else True
+    FORCE_HTTPS = True if os.environ.get('FORCE_HTTPS', '') == '1' else False
+    LOG_LEVEL = int(os.environ.get('LOG_LEVEL', '0'))
+
+
+javaScript = (
+    'text/javascript',
+    'application/javascript',
+    'text/json',
+    'application/json',
+)
+ALLOWED_CONTENT_TYPES = ('text/plain', 'text/html', 'text/css') + javaScript
+OK_REDIRECT = (
+    't.co',
+    'accounts.google.com',
+    'encrypted.google.com',
+    'www.google.com',
+)
+
+dnsRegExp = b'([0-9a-zA-Z.-]*)'
 
 
 def http_connect(flow):
-    flow.response = HTTPResponse.make(418)
+    flow.response = HTTPResponse.make(403)
 
 
-def popHeader(hdr, toPop):
-    keys = [e for e in hdr if e.lower() == toPop.lower()]
-    for k in keys:
-        hdr.pop(k, None)
+def _createHttpsUrl(orig):
+    return re.sub(
+        r'http://([^/]*).ssl(.*)', r'https://\1\2', orig, flags=re.IGNORECASE)
 
 
-def request(flow):
-    popHeader(flow.request.headers, 'Proxy-Connection')
-    host = flow.request.pretty_host
-    if host.endswith('.ssl'):
-        flow.request.scheme = 'https'
-        flow.request.port = 443
-        origHost = host.replace('.ssl', '')
-        known_secure_hosts.add(origHost)
-        flow.request.host = origHost
-    if flow.request.scheme != 'https' and FORCE_HTTPS:
-        newUrl = createSslUrl(flow.request.url)
-        flow.response = HTTPResponse.make(301, '', {'Location': newUrl})
-        return
-    # TODO: we may have the .ssl suffix in them; would be nice just to replace
-    popHeader(flow.request.headers, 'Referer')
-    popHeader(flow.request.headers, 'Origin')
-    flow.request.url = flow.request.url.replace('.ssl/', '/')
-    print('request(' + flow.request.url + ')', flow.request.headers)
+def _iKeys(myDict, key):
+    return [e for e in myDict if e.lower() == key.lower()]
 
 
-def createSslUrl(orig):
-    us = orig.replace('https://', 'http://')
+def _iGet(myDict, key, defaultValue='none'):
+    ks = _iKeys(myDict, key)
+    if len(ks) == 0:
+        return defaultValue
+    elif len(ks) == 1:
+        return myDict[ks[0]]
+    else:
+        raise ValueError('header could be lower or upper case, but not both')
+
+
+def _changeHeader(hdr, toChg, newData=None):
+    for k in _iKeys(hdr, toChg):
+        if '.ssl' == newData:
+            hdr[k] = _createHttpsUrl(hdr[k])
+        elif newData:
+            hdr[k] = newData
+        else:
+            hdr.pop(k, None)
+
+
+def _sanitizeLocation(orig):
+    us = orig.replace('https://', 'http://', 1)
+    # Specifying custom port is forbidden
+    us = re.sub(':[0-9][0-9]*', '', us)
     ul = us.split('/')
-    if not ul[2].endswith('.ssl'):
+    if orig.startswith('https'):
         ul[2] = ul[2] + '.ssl'
     return '/'.join(ul)
 
 
-def chgRegexp(data, regexp, target=b''):
-    return re.sub(regexp, target, data, flags=re.IGNORECASE)
+def request(flow):
+    if LOG_LEVEL is None:
+        start()
+    _changeHeader(flow.request.headers, 'Proxy-Connection')
+    _changeHeader(flow.request.headers, 'X-Requested-With')
+    host = flow.request.pretty_host
+    if host.endswith('.ssl'):
+        flow.request.scheme = 'https'
+        flow.request.port = 443
+        flow.request.url = flow.request.url.replace('.ssl/', '/', 1)
+    if flow.request.scheme != 'https' and FORCE_HTTPS:
+        flow.request.scheme = 'https'
+        newUrl = _sanitizeLocation(flow.request.url)
+        flow.response = HTTPResponse.make(301, '', {'Location': newUrl})
+        return
+    _changeHeader(flow.request.headers, 'Referer', '.ssl')
+    _changeHeader(flow.request.headers, 'Origin', '.ssl')
+    _changeHeader(
+        flow.request.headers, 'User-Agent',
+        'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+    _changeHeader(
+        flow.request.headers, 'Accept',
+        'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+    _changeHeader(flow.request.headers, 'Accept-Language', 'en-US,en;q=0.5')
+    uirh = 'Upgrade-Insecure-Requests'
+    if not _iGet(flow.request.headers, uirh, None):
+        flow.request.headers[uirh] = '1'
+    newReqData = re.sub(
+        b'http%3A%2F%2F' + dnsRegExp + b'.ssl',
+        b'https%3A%2F%2F' + b'\\1',
+        flow.request.content,
+        flags=re.IGNORECASE)
+    # Touch content only if needed:
+    if newReqData != flow.request.content:
+        if LOG_LEVEL > 0:
+            print('newReqData !=;', flow.request.url)
+        flow.request.content = newReqData
+    if LOG_LEVEL > 0:
+        print('requestH(' + flow.request.url + ')', flow.request.headers)
+    if LOG_LEVEL > 1:
+        print('requestC(' + flow.request.url + ')', flow.request.content)
+
+
+def _rmRegexp(data, regexp):
+    return re.sub(regexp, b'', data, flags=re.IGNORECASE)
 
 
 def response(flow):
+    if LOG_LEVEL is None:
+        start()
+    if LOG_LEVEL > 0:
+        print('responseH(' + flow.request.url + ')', flow.response.headers)
     rHeaders = flow.response.headers
-    if rHeaders.get('Location', '').startswith('https://'):
-        newUrl = createSslUrl(rHeaders.get('Location', ''))
-        flow.response = HTTPResponse.make(301, newUrl, {'Location': newUrl})
-        return
+
+    ct = _iGet(rHeaders, 'content-type')
+    if LOG_LEVEL > 1:
+        doPrint = True
+        for i in ('image'):
+            if i in ct:
+                doPrint = False
+        if doPrint:
+            print('responseC(' + flow.request.url + ')', flow.response.content)
+
+    if _iGet(rHeaders, 'Location').startswith('http'):
+        newUrl = _sanitizeLocation(_iGet(rHeaders, 'Location'))
+        rHeaders[_iKeys(rHeaders, 'Location')[0]] = newUrl
 
     rCnt = flow.response.content
-    if len(FILTER_CONTENT) > 0:
-        ct = rHeaders.get('Content-Type', 'none')
-        rlk = [k for k in rHeaders.keys() if k.lower() == 'content-length']
+    if LOG_LEVEL > 0:
         print('FILTER_CONTENT;', ct)
+    if FILTER_CONTENT:
         isAccepted = len(rCnt) == 0
-        if len(rlk) > 0:
-            isAccepted = isAccepted or int(rHeaders[rlk[0]]) == 0
-        for f in FILTER_CONTENT:
+        for f in ALLOWED_CONTENT_TYPES:
             isAccepted = isAccepted or ct.startswith(f)
         if not isAccepted:
             flow.response = HTTPResponse.make(404)
             return
 
-    for ksh in known_secure_hosts:
-        bksh = ksh.encode()
-        if bksh in rCnt:
-            rCnt = rCnt.replace(bksh, bksh + b'.ssl')
-    popHeader(rHeaders, 'Content-Security-Policy')
-    popHeader(rHeaders, 'Strict-Transport-Security')
-    popHeader(rHeaders, 'Public-Key-Pins')
-    rCnt = chgRegexp(rCnt, b'([^q].)https://', b'\\1http://')
-    rCnt = chgRegexp(rCnt, b'integrity="sha256-[A-Za-z0-9+/=]*"')
-    rCnt = chgRegexp(rCnt, b'crossorigin=["\']anonymous["\']')
-    rCnt = chgRegexp(
+    _changeHeader(rHeaders, 'Content-Security-Policy')
+    _changeHeader(rHeaders, 'Strict-Transport-Security')
+    _changeHeader(rHeaders, 'Public-Key-Pins')
+    cookies_old = rHeaders.get_all('Set-Cookie')
+    cookies_new = []
+    for s in cookies_old:
+        sn = re.sub(r';\s*[Ss]ecure\s*', '', s)
+        cookies_new.append(sn)
+        if 'domain=' in sn.lower():
+            sn = re.sub(
+                'domain\s*=\s*' + dnsRegExp.decode('utf-8'),
+                'domain=' + r'\1.ssl',
+                sn,
+                flags=re.IGNORECASE)
+            cookies_new.append(sn)
+    rHeaders.set_all('Set-Cookie', cookies_new)
+    if LOG_LEVEL > 1:
+        print('responseH(' + flow.request.url + ') cookies', cookies_new)
+
+    # Replace content only in text; https is filtered out anyway.
+    doNotTouch = True
+    for typ in (
+            'text/html',
+            'text/json',
+    ):
+        if typ in ct:
+            doNotTouch = False
+    if doNotTouch:
+        return
+
+    for urlPrefix in (
+            b'"https://',
+            b'url=https://',
+            b'\(https://',
+            b"'https://",
+            b'href=\\\\"https:\\\\/\\\\/',
+    ):
+        #searchPrefix=urlPrefix.replace(b'\\\\',b'\\')
+        rCnt = re.sub(
+            urlPrefix + dnsRegExp,
+            urlPrefix.replace(b's:', b':') + b'\\1.ssl',
+            rCnt,
+            flags=re.IGNORECASE)
+    rCnt = _rmRegexp(
         rCnt, b'<meta[^<>]*http-equiv=["\']Content-Security-Policy[^<>]*>')
-
-    cookies = rHeaders.get_all('Set-Cookie')
-    cookies = [re.sub(r';\s*[Ss]ecure\s*', '', s) for s in cookies]
-    rHeaders.set_all('Set-Cookie', cookies)
-
     if flow.request.host not in OK_REDIRECT:
-        rCnt = chgRegexp(rCnt, b'<meta[^<>]*http-equiv=["\']refresh[^<>]*>')
+        rCnt = _rmRegexp(rCnt, b'<meta[^<>]*http-equiv=["\']refresh[^<>]*>')
+        rCnt = _rmRegexp(rCnt, b'class="NoScriptForm[^"]*"')  # twitter
 
     flow.response.content = rCnt
-    print('response(' + flow.request.url + ')', flow.response.headers)

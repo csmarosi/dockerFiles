@@ -11,10 +11,13 @@ RUN apt-get update && \
         python3-dev ipython3-qtconsole \
         r-base r-cran-ggplot2 r-cran-rjson r-cran-reshape2 \
         r-cran-knitr r-cran-data.table \
+        sqlite sqlite3
     && \
     apt-get clean
 
-RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo
+RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
+    && echo 'root:p' | chpasswd
 
 COPY entrypoint.sh /
+
 ENTRYPOINT ["/entrypoint.sh"]
