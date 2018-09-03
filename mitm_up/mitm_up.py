@@ -1,13 +1,9 @@
 from mitmproxy.http import HTTPResponse
 from collections import defaultdict
 import time
-from mitmproxy import ctx as context
 
 ignoreHosts = ['192.168.']
-
-
-def start():
-    context.insecure_urls = defaultdict(float)
+insecure_urls = defaultdict(float)
 
 
 def request(flow):
@@ -22,10 +18,10 @@ def request(flow):
             'Location': url.replace('http://', 'https://', 1)
         })
     now = time.time()
-    if context.insecure_urls[url] + 61 > now:
+    if insecure_urls[url] + 61 > now:
         resp = HTTPResponse.make(500, "mitm seen before" + url, {})
-    if len(context.insecure_urls) > 5 * 1024:
+    if len(insecure_urls) > 5 * 1024:
         print('request(): insecure_urls.clear()')
-        context.insecure_urls.clear()
-    context.insecure_urls[url] = now
+        insecure_urls.clear()
+    insecure_urls[url] = now
     flow.response = resp

@@ -18,6 +18,7 @@ RUN apt-get update && \
 
 RUN pip3 install wheel && \
     pip3 install pexpect && \
+    pip3 install coverage && \
     pip3 install mitmproxy==3.0.4
 
 ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
@@ -25,4 +26,4 @@ ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
 USER proxy
 ENV HOME=/tmp
 COPY mitm_http/mitm_http.py /mitm/
-ENTRYPOINT ["mitmdump", "-p", "8080", "-s", "/mitm/mitm_http.py", "-T", "--quiet"]
+ENTRYPOINT ["mitmdump", "-p", "8080", "-s", "/mitm/mitm_http.py", "--mode", "transparent", "--quiet"]

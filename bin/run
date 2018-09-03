@@ -24,7 +24,9 @@ if [ -s ${exposePortsFile} ]; then
     networkOptions="$(cat ${exposePortsFile})"
 fi
 
-if [ $# -gt 0 ] && docker ps --no-trunc | grep -qE "^${1}|${1}$" ; then
+#For some reason grepping in `docker ps` output is not reliable
+docker ps --no-trunc > /tmp/dockerps
+if [ $# -gt 0 ] && grep -qE "^${1}|${1}$" /tmp/dockerps; then
     networkOptions="--net=container:${1}"
     runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     shift
