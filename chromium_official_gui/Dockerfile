@@ -3,7 +3,7 @@ FROM jess/chrome
 USER root
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         strace \
         pulseaudio \
         python3 \

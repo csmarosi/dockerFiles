@@ -4,8 +4,8 @@ set -exo pipefail
 cmdArg="${1}"
 fileToOpen=/magic/$(basename ${cmdArg} || true)
 
-if type file && file --mime-type ${fileToOpen} | \
-   grep -E 'tion/.*opendoc|tion/.*openxml|tion/.*ms'; then
+if type file && file --mime-type ${fileToOpen} |
+    grep -E 'tion/.*opendoc|tion/.*openxml|tion/.*ms'; then
     libreoffice ${fileToOpen}
     exit 0
 fi

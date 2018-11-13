@@ -7,5 +7,5 @@ set -e
 
 while true; do
     /root/collectd.sh
-    sleep $(( 19 * 59 * 61 ))
+    sleep $((19 * 59 * 61))
 done

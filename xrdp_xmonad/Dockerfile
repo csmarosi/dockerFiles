@@ -4,7 +4,7 @@ RUN sed -i /etc/apt/sources.list \
         -e 's! main$! main non-free contrib!'
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         xmobar \
         xmonad libghc-xmonad-contrib-dev \
         x11-xserver-utils xloadimage \

@@ -2,7 +2,7 @@ FROM debian
 MAINTAINER Csaba Marosi "4bea6c869366227b879ffe4abad50c@gmail.com"
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         sudo git vim ca-certificates \
         rxvt-unicode-lite ratpoison \
         libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev \
@@ -16,7 +16,7 @@ RUN apt-get update && \
 # For a smaller image, remove build tools & artifacts after compilation.
 # Note: The sed reverts git commit a2d9272bc93fde7339599b04c54a65fefbdcab88
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         make autoconf automake libtool pkg-config xz-utils \
         bzip2 xsltproc flex bison g++ gettext libxml-sax-expat-perl \
         nasm \

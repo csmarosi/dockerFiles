@@ -7,7 +7,7 @@ RUN sed -i /etc/apt/sources.list \
 RUN apt-get -oAcquire::AllowInsecureRepositories=true update && \
     apt-get -oAcquire::AllowInsecureRepositories=true \
         install --allow-unauthenticated -yq deb-multimedia-keyring && \
-    apt-get install --no-install-recommends --allow-unauthenticated -y -q \
+    apt-get install --no-install-recommends -yq --allow-unauthenticated \
         pulseaudio mplayer \
         vlc \
         mc wget \

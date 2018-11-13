@@ -1,7 +1,7 @@
 FROM debian
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         chromium pulseaudio \
         python3 \
     && \
@@ -9,7 +9,7 @@ RUN apt-get update && \
 
 #optional wireshark
 RUN true || (apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         strace gdb \
         sudo \
         wireshark tshark && \

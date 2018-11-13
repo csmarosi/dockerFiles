@@ -1,7 +1,7 @@
 FROM debian:sid
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         strace \
         chromium pulseaudio \
         python3 \
@@ -27,7 +27,7 @@ RUN mkdir /opt/gradle && \
 
 #optional wireshark
 RUN true || (apt-get update && \
-    apt-get install --no-install-recommends -y -q wireshark tshark)
+    apt-get install --no-install-recommends -yq wireshark tshark)
 
 COPY chromium_gui/chromium.py /tmp/
 COPY chromium_gui/entrypoint.sh /

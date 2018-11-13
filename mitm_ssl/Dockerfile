@@ -1,7 +1,8 @@
 FROM debian
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    echo wireshark-common	wireshark-common/install-setuid	boolean	false | debconf-set-selections && \
+    apt-get install --no-install-recommends -yq \
         tor iptables \
         tor-arm tor-geoipdb obfsproxy \
         openvpn \
@@ -13,6 +14,7 @@ RUN apt-get update && \
         tcptraceroute netcat-traditional \
         tshark wireshark \
         curl dnsutils wget echoping namebench \
+        make git libnet-ip-perl libio-socket-inet6-perl libnet-dns-perl tayga \
     && \
     apt-get clean
 

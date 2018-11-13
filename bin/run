@@ -25,7 +25,7 @@ if [ -s ${exposePortsFile} ]; then
 fi
 
 #For some reason grepping in `docker ps` output is not reliable
-docker ps --no-trunc > /tmp/dockerps
+docker ps --no-trunc >/tmp/dockerps
 if [ $# -gt 0 ] && grep -qE "^${1}|${1}$" /tmp/dockerps; then
     networkOptions="--net=container:${1}"
     runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
@@ -46,7 +46,7 @@ if [[ ${imageName} == *"gui" ]]; then
     if echo ${XDisplay} | grep -q '/X'; then
         DISPLAY=:$(echo ${XDisplay} | grep -o '[0-9]*')
     fi
-    if [[ "${DISPLAY-}" == ":0" ]]; then
+    if [[ ${DISPLAY-} == ":0" ]]; then
         xhost local:
         mountDirs="${mountDirs} -v /tmp/.X11-unix/X0:/tmp/.X11-unix/X0:ro"
     fi
@@ -58,7 +58,7 @@ if [[ ${imageName} == "root"* ]]; then
     runOptions="$(echo ${runOptions} | sed 's!--rm!!')"
 fi
 
-if echo ${imageName} | grep -qE '^(chrom|firefox)' ; then
+if echo ${imageName} | grep -qE '^(chrom|firefox)'; then
     # Chrome leaks hostname: https://isc.sans.edu/diary/Google+Chrome+and+(weird)+DNS+requests/10312
     runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     #TODO: check this after chromium issue 522853 is closed
@@ -67,7 +67,6 @@ if echo ${imageName} | grep -qE '^(chrom|firefox)' ; then
     # Use only 1 CPU
     runOptions="${runOptions} --cpuset-cpus=0"
 fi
-
 
 if [ ${userId} != 0 ]; then
     mountDirs="${mountDirs} -v /etc/passwd:/etc/passwd:ro"

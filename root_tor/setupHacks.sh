@@ -2,7 +2,7 @@
 set -x
 set -e
 
-test -f /etc/torrc || cat > /etc/torrc <<EOF
+test -f /etc/torrc || cat >/etc/torrc <<EOF
 VirtualAddrNetworkIPv4 10.192.0.0/10
 AutomapHostsOnResolve 1
 TransPort 9040
@@ -17,7 +17,7 @@ EOF
 socketDir=/tmp/tor
 mkdir ${socketDir} && chmod 700 ${socketDir} && chown debian-tor ${socketDir}
 
-cat > /etc/resolv.conf <<EOF
+cat >/etc/resolv.conf <<EOF
 nameserver 127.0.0.1
 EOF
 

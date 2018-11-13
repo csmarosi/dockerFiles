@@ -1,7 +1,7 @@
 FROM xrdp_base
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         openbox \
         x11-xserver-utils xloadimage \
         x11-xkb-utils xkb-data \

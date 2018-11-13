@@ -2,7 +2,7 @@
 set -x
 set -e
 
-cat > /config.pa <<EOF
+cat >/config.pa <<EOF
 load-module module-alsa-sink sink_name=output device=hw:0
 set-default-sink output
 load-module module-native-protocol-tcp auth-ip-acl=0.0.0.0/0 auth-anonymous=1

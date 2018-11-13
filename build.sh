@@ -8,11 +8,14 @@ if [ '--no-cache' == "${1}" ]; then
 fi
 
 for imageName in ${@}; do
-    imageName=$(echo ${imageName} | sed 's!/!!g')
+    imageName=$(echo ${imageName} | sed -e 's!^./!!' -e 's!/!!g')
     dockerFile=${imageName}/Dockerfile
     if [ ! -f ${dockerFile} ]; then
         dockerFile=${imageName}/Dockerfile.gen
-        bash ${imageName}/Dockerfile.sh > ${dockerFile}
+        bash ${imageName}/Dockerfile.sh >${dockerFile}
+    fi
+    if echo ${@} | grep -q -- --generateOnly; then
+        exit 0
     fi
     docker build ${buildOptions} -t ${imageName} -f ${dockerFile} .
     hashId=$(docker images | grep "^${imageName} " | awk '/latest/{print $3}')

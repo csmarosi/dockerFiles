@@ -1,7 +1,7 @@
 FROM debian:sid
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         mysql-client ca-certificates \
         git openssh-client vim \
         cron apache2 \
@@ -12,7 +12,7 @@ RUN apt-get update && \
 RUN \
 echo mysql-server-5.5 mysql-server/root_password_again password p | debconf-set-selections && \
 echo mysql-server-5.5 mysql-server/root_password password p | debconf-set-selections && \
-apt-get install --no-install-recommends -q -y mysql-server
+apt-get install --no-install-recommends -yq mysql-server
 
 RUN /etc/init.d/mysql start && \
 echo tt-rss tt-rss/dbconfig-install boolean true | debconf-set-selections && \
@@ -21,7 +21,7 @@ echo tt-rss tt-rss/mysql/app-pass password | debconf-set-selections && \
 echo tt-rss tt-rss/mysql/admin-pass password p | debconf-set-selections && \
 echo tt-rss tt-rss/reconfigure-webserver multiselect apache2 | debconf-set-selections && \
 echo tt-rss tt-rss/self_url_path string 127.0.0.1/tt-rss | debconf-set-selections && \
-apt-get install --no-install-recommends -q -y tt-rss
+apt-get install --no-install-recommends -yq tt-rss
 
 RUN sed -i /etc/default/tt-rss -e 's/DISABLED=1/DISABLED=0/' && \
     sed -i /etc/tt-rss/config.php -e 's!http://example.org!http://127.0.0.1!' && \

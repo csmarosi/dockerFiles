@@ -1,9 +1,9 @@
 FROM debian
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y -q \
+    apt-get install --no-install-recommends -yq \
         curl \
-        git vim \
+        git vim procps \
         ca-certificates \
     && \
     apt-get clean

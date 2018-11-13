@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-if [ $# -eq 0 ] ; then
+if [ $# -eq 0 ]; then
     docker ps -a --no-trunc --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}"
 fi
 
