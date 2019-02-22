@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 profileGenerator=${HOME}/browser_profiles/chromiumPrivate.py
 if [ ! -f ${profileGenerator} ]; then

@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 cd ${HOME}
 shopt -s dotglob

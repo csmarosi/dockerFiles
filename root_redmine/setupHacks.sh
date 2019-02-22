@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 /etc/init.d/mysql start
 /etc/init.d/apache2 start

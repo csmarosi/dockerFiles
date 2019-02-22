@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 /etc/init.d/apache2 start
 /etc/init.d/ssh start

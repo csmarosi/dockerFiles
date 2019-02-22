@@ -25,6 +25,10 @@ RUN mkdir /opt/gradle && \
     curl https://downloads.gradle.org/distributions/gradle-4.6-bin.zip -o /tmp/x.zip && \
     unzip -d /opt/gradle /tmp/x.zip && rm /tmp/x.zip
 
+RUN apt-get remove -yq scala-library scala && \
+    curl https://www.scala-lang.org/files/archive/scala-2.11.8.deb -o /tmp/s.deb && \
+    dpkg -i /tmp/s.deb && rm /tmp/s.deb
+
 #optional wireshark
 RUN true || (apt-get update && \
     apt-get install --no-install-recommends -yq wireshark tshark)

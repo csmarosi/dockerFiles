@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 cat >/config.pa <<EOF
 load-module module-alsa-sink sink_name=output device=hw:0

@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 mkdir -p /dev/net && mknod /dev/net/tun c 10 200 || true
 test -f /magic2/script_to_execute.sh && bash $_ || true

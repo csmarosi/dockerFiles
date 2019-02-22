@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 cd /var/www/collectd/
 for host in $(awk '/Host /{print $2}' ~/.ssh/config); do

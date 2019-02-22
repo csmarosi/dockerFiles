@@ -1,6 +1,5 @@
 #!/bin/bash
-set -x
-set -e
+set -euxo pipefail
 
 test -f /etc/torrc || cat >/etc/torrc <<EOF
 VirtualAddrNetworkIPv4 10.192.0.0/10
