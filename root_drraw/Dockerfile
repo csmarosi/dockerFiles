@@ -6,6 +6,7 @@ RUN apt-get update && \
         vim \
         openssh-server git \
         libapache2-mod-php5 php5-curl \
+        python3-requests \
     && \
     apt-get clean
 

@@ -1,10 +1,12 @@
 #!/bin/bash
 set -euxo pipefail
 
+if [ $# -ge 1 ]; then
+    configFile=/magic/${1}
+fi
 mkdir -p /dev/net && mknod /dev/net/tun c 10 200 || true
-test -f /magic2/script_to_execute.sh && bash $_ || true
+test -f /magic2/script_to_execute.sh && source $_ || true
 
-configFile=/magic/${1}
 test -f ${configFile}
 
 remoteIp=$(awk '/^remote /{print $2}' ${configFile})

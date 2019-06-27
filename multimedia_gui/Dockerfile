@@ -10,7 +10,7 @@ RUN apt-get -oAcquire::AllowInsecureRepositories=true update && \
     apt-get install --no-install-recommends -yq --allow-unauthenticated \
         pulseaudio mplayer \
         vlc \
-        mc wget \
+        mc wget ca-certificates youtube-dl \
         sxiv \
         ffmpeg \
         python3 \

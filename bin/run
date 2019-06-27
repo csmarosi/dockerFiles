@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
+#usage: run <docker_image[:tag]> [port:port|network_container|bind_mount_fs|CMD_args]
 imageWithTag="${1}"
 imageName=$(echo ${imageWithTag} | cut -d: -f1)
 shift
@@ -24,6 +25,10 @@ if [ -s ${exposePortsFile} ]; then
     networkOptions="$(cat ${exposePortsFile})"
 fi
 
+if [ $# -gt 0 ] && echo "${1}" | grep -qE '^[0-9]+:[0-9]+$'; then
+    networkOptions="${networkOptions} -p ${1}"
+    shift
+fi
 #For some reason grepping in `docker ps` output is not reliable
 docker ps --no-trunc >/tmp/dockerps
 if [ $# -gt 0 ] && grep -qE "^${1}|${1}$" /tmp/dockerps; then
@@ -33,10 +38,16 @@ if [ $# -gt 0 ] && grep -qE "^${1}|${1}$" /tmp/dockerps; then
 fi
 runCommand="${@}"
 if [ -n "${runCommand}" ]; then
-    filePath=$(readlink -f "${runCommand}")
-    if [ -f "${filePath}" ]; then
-        dirName=$(dirname "${filePath}")
-        mountDirs="${mountDirs} -v ${dirName}:/magic:ro"
+    filePath=$(readlink -f "$(echo ${runCommand} | cut -d: -f1)")
+    destDir=$(echo ${runCommand} | awk -F: '{print $2}')
+    if [ -z "${destDir}" ]; then
+        destDir=/magic
+        mountName=$(dirname "${filePath}")
+    else
+        mountName="${filePath}"
+    fi
+    if [ -e "${filePath}" ]; then
+        mountDirs="${mountDirs} -v ${mountName}:${destDir}:ro"
         runCommand=$(basename "${filePath}")
     fi
 fi
