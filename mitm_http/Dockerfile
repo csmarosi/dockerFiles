@@ -8,14 +8,15 @@ RUN apt-get update && \
         openvpn \
         procps vim \
         python3 python3-requests \
-        libssl-dev gcc \
+        libssl-dev gcc g++ \
         python3-pip python3-setuptools python3-dev \
-        youtube-dl openssh-client w3m \
+        youtube-dl openssh-server w3m \
         tcptraceroute netcat-traditional \
-        tshark wireshark \
-        curl dnsutils wget echoping namebench \
+        tshark wireshark nmap \
+        curl dnsutils wget namebench \
         make git libnet-ip-perl libio-socket-inet6-perl libnet-dns-perl tayga \
         dnsmasq \
+        ntp \
     && \
     apt-get clean
 

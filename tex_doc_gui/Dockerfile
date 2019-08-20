@@ -8,7 +8,7 @@ RUN apt-get update && \
         pandoc \
         texlive-latex-recommended texlive-latex-extra \
         texlive-fonts-extra texlive-fonts-recommended lmodern \
-        sxiv pinta \
+        sxiv gpaint tesseract-ocr \
         okular \
         kcachegrind graphviz \
     && \

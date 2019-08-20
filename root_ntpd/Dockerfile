@@ -33,4 +33,5 @@ ENV PATH $PATH:/etcd-v3.2.25-linux-amd64
 
 ENV TERM=linux TERMINFO=/etc/terminfo LANG=en_US.UTF-8
 
-CMD ["/magic/start.sh"]
+COPY root_ntpd/setupHacks.sh /root/
+ENTRYPOINT ["/root/setupHacks.sh"]

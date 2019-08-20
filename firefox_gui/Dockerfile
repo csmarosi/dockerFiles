@@ -7,4 +7,4 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-CMD ["firefox"]
+ENTRYPOINT ["/usr/bin/firefox"]

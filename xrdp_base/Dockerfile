@@ -1,4 +1,4 @@
-FROM debian
+FROM debian:stretch
 MAINTAINER Csaba Marosi "4bea6c869366227b879ffe4abad50c@gmail.com"
 
 RUN apt-get update && \

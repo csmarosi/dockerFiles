@@ -2,7 +2,6 @@ FROM debian
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -yq \
-        freerdp-x11 \
         qemu \
         bochs-x \
         git git-svn vim \
