@@ -1,0 +1,11 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
+    }
+}
+
+apply plugin: 'scala'
+apply plugin: 'scalafmt'
