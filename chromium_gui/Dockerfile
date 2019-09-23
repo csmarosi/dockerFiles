@@ -13,7 +13,8 @@ RUN true || (apt-get update && \
         strace gdb \
         sudo \
         wireshark tshark && \
-    echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo)
+    echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
+    && echo 'root:p' | chpasswd)
 
 COPY chromium_gui/chromium.py /tmp/
 COPY chromium_gui/entrypoint.sh /

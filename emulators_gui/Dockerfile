@@ -10,7 +10,8 @@ RUN apt-get update && \
     && \
     apt-get clean
 
-RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo
+RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
+    && echo 'root:p' | chpasswd
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]

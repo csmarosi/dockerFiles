@@ -24,6 +24,7 @@ RUN apt-get update && \
     cd /opt && \
     git clone --recursive https://github.com/neutrinolabs/xrdp.git -b v0.9.6 && \
     cd xrdp && \
+    sed -i xorg/X11R7.6/rdp/Makefile -e 's/-DMITSHM//' && \
     sed -i xrdp/xrdp.ini.in \
         -e '/^\[Xorg\]/,/^\[X11rdp\]/{//!d}' \
         -e '/^\[Xorg\]/d' && \

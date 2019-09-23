@@ -14,7 +14,8 @@ RUN pip3 install \
         scikit-learn \
         yapf
 
-RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo
+RUN echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/allSudo \
+    && echo 'root:p' | chpasswd
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]

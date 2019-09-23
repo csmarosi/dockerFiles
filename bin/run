@@ -33,8 +33,10 @@ fi
 docker ps --no-trunc >/tmp/dockerps
 if [ $# -gt 0 ] && grep -qE "^${1}|${1}$" /tmp/dockerps; then
     networkOptions="--net=container:${1}"
-    runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     shift
+fi
+if echo ${networkOptions} | grep -q '=container:'; then
+    runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
 fi
 runCommand="${@}"
 if [ -n "${runCommand}" ]; then
@@ -73,8 +75,7 @@ if echo ${imageName} | grep -qE '^(chrom|firefox)'; then
     # Chrome leaks hostname: https://isc.sans.edu/diary/Google+Chrome+and+(weird)+DNS+requests/10312
     runOptions="$(echo ${runOptions} | sed 's!--hostname=[^ ]*!!')"
     #TODO: check this after chromium issue 522853 is closed
-    tmpDir=$(mktemp -d --tmpdir=/dev/shm)
-    mountDirs="${mountDirs} -v ${tmpDir}:/dev/shm"
+    runOptions="${runOptions} --shm-size=$(df -h /dev/shm/ | awk '/tmpfs/{print $2}')"
     # Use only 1 CPU
     runOptions="${runOptions} --cpuset-cpus=0"
 fi
